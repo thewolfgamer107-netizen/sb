@@ -49,6 +49,7 @@
     <section class="view" id="goalsView">
       <div class="tracker-frame pixel-panel">
         <div class="folder-tabs" id="goalsTabs"></div>
+        <div class="goal-subtabs" id="goalSubtabs"></div>
         <div class="tracker-toolbar"><div id="goalsOverall" class="compact-progress"></div><button class="small-button" data-add-group="goals">+ Group</button></div>
         <div class="skill-progress" id="goalsSkillProgress"></div>
         <div class="scroll-space" id="goalsContent"></div>
@@ -57,12 +58,11 @@
 
     <section class="view" id="profileView">
       <div class="pixel-panel section-panel profile-shell">
-        <div class="section-head"><div><p class="kicker">API PROFILE VIEW</p><h2>SkyBlock Profile</h2></div><button class="small-button" id="profileRefresh" disabled>Refresh</button></div>
-        <p class="muted">The layout is ready for a future Hypixel/profile-data connection. No API key or username is transmitted in this version.</p>
+        <div class="section-head"><div><p class="kicker">API PROFILE VIEW</p><h2>SkyBlock Profile</h2><p class="muted" id="profileStatus"></p></div><div class="profile-controls"><label>Profile<select id="profileSelect"></select></label><button class="small-button" id="profileRefresh">Refresh</button></div></div>
         <div class="profile-category-tabs">
-          <button class="profile-category active">Trophy Fish</button><button class="profile-category">Trophy Frogs</button><button class="profile-category">Mutations</button><button class="profile-category">Shards</button>
+          <button class="profile-category active" data-profile-category="trophy-fish">Trophy Fish</button><button class="profile-category" data-profile-category="trophy-frogs">Trophy Frogs</button><button class="profile-category" data-profile-category="mutations">Mutations</button><button class="profile-category" data-profile-category="shards">Shards</button>
         </div>
-        <div class="profile-placeholder"><strong>API integration not enabled yet</strong><p>Add your username below so it is already stored locally when the profile connection is built.</p></div>
+        <div id="profileContent"></div>
       </div>
     </section>
 
@@ -97,10 +97,10 @@
             <label>Inner background<input type="color" id="innerColor" /></label>
             <button class="small-button" id="saveColors">Save colors</button>
           </details>
-          <details class="settings-card rarity-settings collapsible-settings"><summary><h3>Rarities</h3></summary><p class="muted">Rows are ordered from lowest to highest. Completion percentages map linearly across them.</p><div id="rarityEditor"></div></details>
+          <details class="settings-card rarity-settings collapsible-settings" open><summary><h3>Rarities</h3></summary><p class="muted">Rows are ordered from lowest to highest. Completion percentages map linearly across them.</p><div id="rarityEditor"></div></details>
         </div>
         <details class="settings-card manage-section collapsible-settings" open><summary><h3>Manage layout</h3></summary><p class="muted">Rename and reorder tabs, groups, and tasks. Archive keeps history. Permanent delete removes setup/test items and saved values.</p><div id="manageContent"></div></details>
-        <details class="settings-card collapsible-settings"><summary><h3>Profile setup</h3></summary><label>SkyBlock username<input id="profileUsername" maxlength="32" placeholder="Minecraft username" /></label><p class="muted">Stored only in this browser. API fetching will be added separately after its data sources are confirmed.</p><button class="small-button" id="saveProfileSettings">Save username</button></details>
+        <details class="settings-card collapsible-settings"><summary><h3>Profile setup</h3></summary><label>SkyBlock username<input id="profileUsername" maxlength="32" placeholder="Minecraft username" /></label><label>Hypixel API key<input id="profileApiKey" type="password" autocomplete="off" placeholder="Stored only in this browser" /></label><p class="muted">The key is saved in local browser storage and sent only when you press Refresh. Do not commit an API key into the GitHub files.</p><button class="small-button" id="saveProfileSettings">Save profile settings</button></details>
       </div>
     </section>
   </main>
@@ -111,7 +111,12 @@
     <label>Task name<input id="taskName" maxlength="80" required /></label>
     <div class="form-grid"><label>Folder tab<select id="taskTab"></select></label><label>Group<select id="taskGroup"></select></label></div>
     <div class="form-grid"><label>Task rarity<select id="taskRarity"></select></label><label>Completion weight<input id="taskWeight" type="number" min="0" step="0.25" value="1" /></label></div>
-    <label>Checklist parts <span class="muted">(optional; one per line as Name | Weight)</span><textarea id="taskParts" rows="7" placeholder="Collect materials | 2&#10;Forge components | 4&#10;Apply upgrades | 1"></textarea></label>
+    <section class="goal-type-fields hidden" id="goalTypeFields">
+      <div class="form-grid"><label>Goal type<select id="goalType"><option value="checklist">Checklist / checkbox</option><option value="progression">Tier progression</option><option value="counter">Number counter</option><option value="percentage">Percentage</option><option value="stars">Stars</option></select></label><label>Goal subtab<select id="taskSubtab"></select></label></div>
+      <label class="progression-only">Progression tiers <span class="muted">(one per line: Tier name | rarity)</span><textarea id="goalStages" rows="6" placeholder="Not owned | common&#10;Revenant Falchion | rare&#10;Reaper Falchion | epic&#10;Axe of the Shredded | legendary"></textarea></label>
+      <div class="form-grid numeric-goal-only"><label>Target value<input id="goalTarget" type="number" min="1" step="1" value="100" /></label><label>Display suffix<input id="goalSuffix" maxlength="12" placeholder="runs, %, stars" /></label></div>
+    </section>
+    <label>Checklist parts <span class="muted">(one per line: Name | Weight | rarity)</span><textarea id="taskParts" rows="7" placeholder="Collect materials | 2 | rare&#10;Forge components | 4 | epic&#10;Apply upgrades | 1 | legendary"></textarea></label>
     <section class="goal-completion-field hidden" id="goalCompletionField">
       <label class="check-option"><input type="checkbox" id="taskCompletedBeforeCreation" /> Completed before it was added to the tracker</label>
       <label id="taskCompletedDateLabel">Original completion date <input type="date" id="taskCompletedDate" /></label>
@@ -124,7 +129,7 @@
     <div class="dialog-head"><h2 id="groupDialogTitle">Add group</h2><button type="button" class="round-button" data-close>×</button></div>
     <input type="hidden" id="groupId" /><input type="hidden" id="groupPage" />
     <label>Group name<input id="groupName" maxlength="60" required /></label>
-    <div class="form-grid"><label>Folder tab<select id="groupTab"></select></label><label>Active rarity<select id="groupRarity"></select></label></div>
+    <div class="form-grid"><label>Folder tab<select id="groupTab"></select></label><label class="goal-group-subtab hidden">Goal subtab<select id="groupSubtab"></select></label><label>Active rarity<select id="groupRarity"></select></label></div>
     <label id="completedRarityLabel">Completed-copy rarity<select id="groupCompletedRarity"></select></label>
     <div class="dialog-actions"><button type="button" class="danger-button hidden" id="deleteGroupDialog">Permanent delete</button><span class="dialog-spacer"></span><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
   </form></dialog>
@@ -135,6 +140,13 @@
     <div class="dialog-actions"><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Add</button></div>
   </form></dialog>
 
+
+  <dialog id="subtabDialog"><form id="subtabForm" method="dialog">
+    <div class="dialog-head"><h2>Add goal subtab</h2><button type="button" class="round-button" data-close>×</button></div>
+    <input type="hidden" id="subtabParent" />
+    <label>Subtab name<input id="subtabName" maxlength="50" required /></label>
+    <div class="dialog-actions"><span class="dialog-spacer"></span><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
+  </form></dialog>
   <div class="toast" id="toast"></div>
   <script src="app.js"></script>
 </body>

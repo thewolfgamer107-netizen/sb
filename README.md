@@ -29,3 +29,19 @@ Export a backup from **History** first. Then replace the repository files with t
 ## Data safety
 
 Data is stored locally for each browser and website address. Export backups regularly, especially before clearing browser data, changing the GitHub Pages URL, or testing permanent deletion.
+
+
+## Profile API viewer
+
+Open Settings > Profile setup and enter a Minecraft username and a Hypixel developer API key. The key is kept in this browser's local storage and is not included in the project files. Press Refresh on the Profile page to cache the latest profile response. Trophy Fish, Trophy Frogs, Mutations, and Shards are displayed by matching the fields currently exposed by the API; a category may be empty if Hypixel does not expose it for that profile or changes its schema.
+
+## This update
+
+- Restores the rarity color editor and opens it by default.
+- Preserves expanded/collapsed layout-management sections while renaming or reordering items.
+- Uses real spacer columns between weeks in the month/year heat map.
+- Adds an experimental browser-cached Hypixel profile viewer.
+
+## Goals progression system
+
+Goals now use a three-level organization: main tab, subtab, and group. Goal cards can be checklists, tier progressions, counters, percentages, or stars. Progression tiers use `Tier name | rarity`; checklist parts use `Part name | weight | rarity`. Completed checklist parts can automatically promote the card color, while progression arrows move through the configured tiers.
