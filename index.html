@@ -22,6 +22,7 @@
       <button class="page-tab active" data-view="today">Today</button>
       <button class="page-tab" data-view="goals">Goals</button>
       <button class="page-tab" data-view="profile">Profile</button>
+      <button class="page-tab" data-view="recipes">Recipes</button>
       <button class="page-tab" data-view="history">History</button>
       <button class="page-tab" data-view="settings">Settings</button>
     </nav>
@@ -60,9 +61,25 @@
       <div class="pixel-panel section-panel profile-shell">
         <div class="section-head"><div><p class="kicker">API PROFILE VIEW</p><h2>SkyBlock Profile</h2><p class="muted" id="profileStatus"></p></div><div class="profile-controls"><label>Profile<select id="profileSelect"></select></label><button class="small-button" id="profileRefresh">Refresh</button></div></div>
         <div class="profile-category-tabs">
-          <button class="profile-category active" data-profile-category="trophy-fish">Trophy Fish</button><button class="profile-category" data-profile-category="trophy-frogs">Trophy Frogs</button><button class="profile-category" data-profile-category="mutations">Mutations</button><button class="profile-category" data-profile-category="shards">Shards</button>
+          <button class="profile-category active" data-profile-category="trophy-fish">Trophy Fish</button><button class="profile-category" data-profile-category="trophy-frogs">Trophy Frogs</button><button class="profile-category" data-profile-category="mutations">Mutations</button><button class="profile-category" data-profile-category="shards">Shards</button><button class="profile-category" data-profile-category="task-links">Task Links</button><button class="profile-category" data-profile-category="catalog">API Catalog</button>
         </div>
         <div id="profileContent"></div>
+      </div>
+    </section>
+
+    <section class="view" id="recipesView">
+      <div class="desktop-grid recipe-layout">
+        <div class="pixel-panel section-panel">
+          <div class="section-head"><div><p class="kicker">LIVE MATERIAL TRACKER</p><h2>Recipe Projects</h2><p class="muted">Higher-tier materials are consumed before their lower-tier recipes are expanded.</p></div><button class="small-button" id="addRecipeProject">+ Project</button></div>
+          <div id="recipeProjects"></div>
+        </div>
+        <aside class="pixel-panel section-panel">
+          <div class="section-head"><div><p class="kicker">PROFILE INVENTORY</p><h2>Detected Holdings</h2></div><button class="small-button" id="refreshRecipeData">Refresh profile</button></div>
+          <p class="muted">Sack counters and other plain API counts are detected automatically. Add an override when an inventory container is not exposed as a plain count.</p>
+          <label>Search holdings<input id="holdingSearch" placeholder="Amber, Mithril, Quartz…"></label>
+          <div id="holdingsList" class="holdings-list"></div>
+          <details class="settings-card" open><summary><h3>Manual holding override</h3></summary><label>Item<input id="holdingItem" list="apiItemNames" placeholder="Search item name or ID"></label><label>Amount<input id="holdingAmount" type="number" min="0" step="1" value="0"></label><button class="small-button" id="saveHoldingOverride">Save override</button></details>
+        </aside>
       </div>
     </section>
 
@@ -100,7 +117,7 @@
           <details class="settings-card rarity-settings collapsible-settings" open><summary><h3>Rarities</h3></summary><p class="muted">Rows are ordered from lowest to highest. Completion percentages map linearly across them.</p><div id="rarityEditor"></div></details>
         </div>
         <details class="settings-card manage-section collapsible-settings" open><summary><h3>Manage layout</h3></summary><p class="muted">Rename and reorder tabs, groups, and tasks. Archive keeps history. Permanent delete removes setup/test items and saved values.</p><div id="manageContent"></div></details>
-        <details class="settings-card collapsible-settings"><summary><h3>Profile setup</h3></summary><label>SkyBlock username<input id="profileUsername" maxlength="32" placeholder="Minecraft username" /></label><label>Hypixel API key<input id="profileApiKey" type="password" autocomplete="off" placeholder="Stored only in this browser" /></label><p class="muted">The key is saved in local browser storage and sent only when you press Refresh. Do not commit an API key into the GitHub files.</p><button class="small-button" id="saveProfileSettings">Save profile settings</button></details>
+        <details class="settings-card collapsible-settings"><summary><h3>Profile setup</h3></summary><label>SkyBlock username<input id="profileUsername" maxlength="32" placeholder="Minecraft username" /></label><label>Hypixel API key<input id="profileApiKey" type="password" autocomplete="off" placeholder="Stored only in this browser" /></label><p class="muted">The key is saved in local browser storage and sent only when you press Refresh. Do not commit an API key into the GitHub files.</p><label>Automatic profile check<select id="profileAutoRefresh"><option value="0">Manual only</option><option value="5">Every 5 minutes</option><option value="10">Every 10 minutes</option><option value="30">Every 30 minutes</option></select></label><button class="small-button" id="saveProfileSettings">Save profile settings</button></details>
       </div>
     </section>
   </main>
@@ -117,6 +134,16 @@
       <div class="form-grid numeric-goal-only"><label>Target value<input id="goalTarget" type="number" min="1" step="1" value="100" /></label><label>Display suffix<input id="goalSuffix" maxlength="12" placeholder="runs, %, stars" /></label></div>
     </section>
     <label>Checklist parts <span class="muted">(one per line: Name | Weight | rarity)</span><textarea id="taskParts" rows="7" placeholder="Collect materials | 2 | rare&#10;Forge components | 4 | epic&#10;Apply upgrades | 1 | legendary"></textarea></label>
+    <section class="goal-api-field hidden" id="goalApiField">
+      <h3>API condition</h3>
+      <label class="check-option"><input type="checkbox" id="taskApiEnabled"> Link this goal to profile data</label>
+      <div id="taskApiControls" class="hidden">
+        <div class="form-grid"><label>Condition source<select id="taskApiSource"><option value="museum">Museum donation</option><option value="count">Detected item amount</option><option value="field">Profile field</option></select></label><label>Required amount<input id="taskApiValue" type="number" min="1" step="1" value="1"></label></div>
+        <label>Search and select item<input id="taskApiItem" list="apiItemNames" placeholder="Type a visible item name, then select it"></label>
+        <label class="api-field-path hidden">Profile field path<input id="taskApiPath" placeholder="members.UUID.player_data.experience…"></label>
+        <p class="muted">The visible item name is resolved to its current Hypixel internal ID. You do not need to guess IDs.</p>
+      </div>
+    </section>
     <section class="goal-completion-field hidden" id="goalCompletionField">
       <label class="check-option"><input type="checkbox" id="taskCompletedBeforeCreation" /> Completed before it was added to the tracker</label>
       <label id="taskCompletedDateLabel">Original completion date <input type="date" id="taskCompletedDate" /></label>

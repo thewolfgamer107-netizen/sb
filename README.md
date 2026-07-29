@@ -1,43 +1,30 @@
-# SkyBlock Task Menu
+# SkyBlock Task Menu — Complete Build
 
-A static, offline-capable task and goals tracker designed for GitHub Pages.
+This is a static, desktop-first SkyBlock companion designed for GitHub Pages. It combines all requested features into one clean build.
 
-## Features
+## Included
 
-- Hypixel-style square panels and rarity-colored folder tabs
-- Separate Today and Goals layouts
-- Weighted task progress, including weights for checklist parts
-- Daily skill heat map with 1-week, 1-month, and 1-year ranges
-- Automatic rarity colors based on weighted completion percentage
-- Goal completion dates and completed-group copies
-- Editable colors for the page, panels, groups, tasks, inner areas, outlines, and rarities
-- Archive and permanent-delete controls
-- Browser-local history with JSON backup and restore
+- **Today**: skill tabs, groups, weighted tasks, weighted checklist parts, automatic daily rollover, manual reset, rarity-based progress, and a 7-day overview.
+- **Goals**: separate main tabs and subtabs, groups, checklist goals, tier progressions, counters, percentages, stars, completion dates, API-linked conditions, and completed goal handling.
+- **Profile**: username/API-key settings, selected-profile cache, museum/profile refresh, Trophy Fish/Frogs/Mutations/Shards discovery, API task links, and live item catalog.
+- **Recipes**: recursive recipe projects, higher-tier material credit, raw-cost expansion, detected profile holdings, manual holding overrides, and API recipe import when metadata is available.
+- **History**: weighted daily details plus week, month, and year heatmaps.
+- **Settings**: editable colors and rarities, editable/reorderable tabs, groups, and tasks, collapsible management sections, archive, permanent delete, backup export/import.
 
-## Publish on GitHub Pages
+## Fresh storage namespace
+
+This complete build uses a new browser-storage key so it starts clean instead of inheriting the partially broken API build. Existing older data will not load automatically. You can still try importing a JSON backup through the app.
+
+## GitHub Pages
 
 1. Unzip this package.
-2. Upload the files inside `skyblock-daily-tracker` to the root of your GitHub repository.
-3. Open **Settings → Pages** in the repository.
-4. Choose **Deploy from a branch**, then select `main` and `/(root)`.
-5. Save and wait for GitHub to publish the site.
+2. Upload the files inside the folder to the root of your GitHub repository.
+3. Commit the replacements.
+4. In **Settings → Pages**, publish from `main` and `/(root)`.
+5. Hard-refresh the live page once after deployment.
 
-## Updating an existing installation
+## API use
 
-Export a backup from **History** first. Then replace the repository files with this package and commit them. Existing browser data is migrated automatically; old tasks and checklist parts receive a default weight of 1.
+Enter the Minecraft username and Hypixel API key under **Settings → Profile setup**. The key is stored in that browser's local storage and is not included in the repository files. Automatic checks can run every 5, 10, or 30 minutes.
 
-## Data safety
-
-Data is stored locally for each browser and website address. Export backups regularly, especially before clearing browser data, changing the GitHub Pages URL, or testing permanent deletion.
-
-
-## Profile API viewer
-
-Open Settings > Profile setup and enter a Minecraft username and a Hypixel developer API key. The key is kept in this browser's local storage and is not included in the project files. Press Refresh on the Profile page to cache the latest profile response. Trophy Fish, Trophy Frogs, Mutations, and Shards are displayed by matching the fields currently exposed by the API; a category may be empty if Hypixel does not expose it for that profile or changes its schema.
-
-## This update
-
-- Restores the rarity color editor and opens it by default.
-- Preserves expanded/collapsed layout-management sections while renaming or reordering items.
-- Uses real spacer columns between weeks in the month/year heat map.
-- Adds an experimental browser-cached Hypixel profile viewer.
+The item catalog is loaded from Hypixel's live SkyBlock resource endpoint. Recipe metadata is not available for every item, so recipes can also be entered manually. Recursive calculations still work for all manually saved recipes.
