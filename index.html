@@ -3,68 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#151424" />
-  <title>Skyblock Daily Tracker</title>
+  <meta name="theme-color" content="#071525" />
+  <title>SkyBlock Task Menu</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div><p class="eyebrow">HYPIXEL SKYBLOCK</p><h1>Daily Tracker</h1></div>
-    <div class="header-actions"><span id="todayLabel" class="date-chip"></span><button class="icon-button" id="settingsButton" title="Manage everything">⚙</button></div>
+  <header class="site-header pixel-panel">
+    <div><p class="kicker">HYPIXEL SKYBLOCK</p><h1>Task Menu</h1></div>
+    <div class="header-tools"><span id="todayLabel"></span><button class="round-button" id="settingsShortcut" title="Settings">⚙</button></div>
   </header>
 
   <main class="app-shell">
-    <nav class="main-nav">
-      <button class="nav-button active" data-view="today">Today</button>
-      <button class="nav-button" data-view="history">History</button>
-      <button class="nav-button" data-view="manage">Manage</button>
+    <nav class="page-tabs pixel-panel" aria-label="Main pages">
+      <button class="page-tab active" data-view="today">Today</button>
+      <button class="page-tab" data-view="goals">Goals</button>
+      <button class="page-tab" data-view="history">History</button>
+      <button class="page-tab" data-view="settings">Settings</button>
     </nav>
 
-    <section id="todayView" class="view active">
-      <div class="folder-frame">
-        <div id="skillTabs" class="folder-tabs" aria-label="Skill folders"></div>
-        <div class="folder-body">
-          <div class="progress-panel">
-            <div><span class="muted">Today's progress</span><strong id="progressText">0 / 0</strong></div>
-            <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
-          </div>
-          <div id="skillContent" class="scroll-area"></div>
+    <section class="view active" id="todayView">
+      <div class="tracker-frame pixel-panel">
+        <div class="folder-tabs" id="todayTabs"></div>
+        <div class="tracker-toolbar">
+          <div id="todayOverall" class="compact-progress"></div>
+          <button class="small-button" data-add-group="today">+ Group</button>
         </div>
+        <div class="skill-progress" id="todaySkillProgress"></div>
+        <div class="scroll-space" id="todayContent"></div>
       </div>
-      <div class="bottom-actions"><button id="resetTodayButton" class="danger-secondary">Reset today's checkboxes</button></div>
+      <div class="center-actions"><button class="danger-button" id="resetToday">Reset today</button></div>
     </section>
 
-    <section id="historyView" class="view">
-      <div class="section-heading"><div><p class="eyebrow">PAST DAYS</p><h2>History</h2></div><button id="exportButton" class="secondary-button">Export backup</button></div>
-      <div class="history-controls"><label>Choose a date<input id="historyDate" type="date" /></label><button id="importButton" class="secondary-button">Import backup</button><input id="importFile" type="file" accept="application/json" hidden /></div>
-      <div id="historySummary" class="summary-card"></div><div id="historyList" class="history-list"></div>
+    <section class="view" id="goalsView">
+      <div class="tracker-frame pixel-panel">
+        <div class="folder-tabs" id="goalsTabs"></div>
+        <div class="tracker-toolbar">
+          <div id="goalsOverall" class="compact-progress"></div>
+          <button class="small-button" data-add-group="goals">+ Group</button>
+        </div>
+        <div class="skill-progress" id="goalsSkillProgress"></div>
+        <div class="scroll-space" id="goalsContent"></div>
+      </div>
     </section>
 
-    <section id="manageView" class="view">
-      <div class="section-heading"><div><p class="eyebrow">CUSTOMIZE</p><h2>Manage Layout</h2></div><button id="addTaskButton" class="primary-button">+ Add task</button></div>
-      <p class="muted manage-intro">Rename, move, edit, archive, or restore tasks. Old daily records stay attached to each task's permanent ID.</p>
-      <div id="manageList" class="manage-list"></div>
+    <section class="view" id="historyView">
+      <div class="pixel-panel section-panel">
+        <div class="section-head"><div><p class="kicker">DAILY ARCHIVE</p><h2>History</h2></div><button class="small-button" id="exportBackup">Export backup</button></div>
+        <div class="history-controls"><label>Date<input type="date" id="historyDate" /></label><button class="small-button" id="importBackup">Import backup</button><input hidden type="file" accept="application/json" id="importFile" /></div>
+        <div id="historySummary" class="summary-box"></div>
+        <div id="historyContent" class="history-content"></div>
+      </div>
+    </section>
+
+    <section class="view" id="settingsView">
+      <div class="pixel-panel section-panel">
+        <div class="section-head"><div><p class="kicker">CUSTOMIZATION</p><h2>Settings</h2></div><button class="small-button" id="addRarity">+ Rarity</button></div>
+        <div class="settings-grid">
+          <section class="settings-card"><h3>Menu colors</h3><label>Default outline<input type="color" id="outlineColor" /></label><label>Panel background<input type="color" id="panelColor" /></label><label>Inner background<input type="color" id="innerColor" /></label><button class="small-button" id="saveColors">Save colors</button></section>
+          <section class="settings-card rarity-settings"><h3>Rarities</h3><p class="muted">Names and colors are fully editable. Higher rows count as higher rarity.</p><div id="rarityEditor"></div></section>
+        </div>
+        <section class="settings-card manage-section"><div class="section-head"><div><h3>Manage layout</h3><p class="muted">Edit or archive tabs, groups, and tasks without deleting old history.</p></div></div><div id="manageContent"></div></section>
+      </div>
     </section>
   </main>
 
   <dialog id="taskDialog"><form id="taskForm" method="dialog">
-    <div class="dialog-heading"><h2 id="dialogTitle">Add task</h2><button type="button" data-close-dialog class="icon-button">✕</button></div>
-    <input id="taskId" type="hidden" />
-    <label>Task name<input id="taskName" required maxlength="60" placeholder="e.g. Visitors" /></label>
-    <div class="form-grid"><label>Skill folder<select id="taskSkill"></select></label><label>Group box<select id="taskGroup"></select></label></div>
-    <div class="form-grid"><label>Inner tab<select id="taskPanel"></select></label><label>Task type<select id="taskType"><option value="single">Single checkbox</option><option value="group">Multiple checkboxes</option></select></label></div>
-    <div id="subtasksField" class="hidden"><label>Checklist items<textarea id="taskSubtasks" rows="6" placeholder="One item per line"></textarea></label></div>
-    <div class="dialog-actions"><button type="button" data-close-dialog class="secondary-button">Cancel</button><button class="primary-button" value="default">Save task</button></div>
+    <div class="dialog-head"><h2 id="taskDialogTitle">Add task</h2><button type="button" class="round-button" data-close>×</button></div>
+    <input type="hidden" id="taskId" /><input type="hidden" id="taskPage" />
+    <label>Task name<input id="taskName" maxlength="80" required /></label>
+    <div class="form-grid"><label>Folder tab<select id="taskTab"></select></label><label>Group<select id="taskGroup"></select></label></div>
+    <label>Task rarity<select id="taskRarity"></select></label>
+    <label>Checklist parts <span class="muted">(optional; one per line)</span><textarea id="taskParts" rows="7" placeholder="Collect materials&#10;Forge components&#10;Apply upgrades"></textarea></label>
+    <div class="dialog-actions"><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
   </form></dialog>
 
-  <dialog id="nameDialog"><form id="nameForm" method="dialog">
-    <div class="dialog-heading"><h2 id="nameDialogTitle">Add</h2><button type="button" data-close-dialog class="icon-button">✕</button></div>
-    <input id="nameMode" type="hidden" /><input id="nameContext" type="hidden" />
-    <label id="nameLabel">Name<input id="newName" required maxlength="40" /></label>
-    <div class="dialog-actions"><button type="button" data-close-dialog class="secondary-button">Cancel</button><button class="primary-button" value="default">Add</button></div>
+  <dialog id="groupDialog"><form id="groupForm" method="dialog">
+    <div class="dialog-head"><h2 id="groupDialogTitle">Add group</h2><button type="button" class="round-button" data-close>×</button></div>
+    <input type="hidden" id="groupId" /><input type="hidden" id="groupPage" />
+    <label>Group name<input id="groupName" maxlength="60" required /></label>
+    <div class="form-grid"><label>Folder tab<select id="groupTab"></select></label><label>Active rarity<select id="groupRarity"></select></label></div>
+    <label id="completedRarityLabel">Completed-copy rarity<select id="groupCompletedRarity"></select></label>
+    <div class="dialog-actions"><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
   </form></dialog>
 
-  <div id="toast" class="toast" role="status"></div><script src="app.js"></script>
+  <dialog id="tabDialog"><form id="tabForm" method="dialog">
+    <div class="dialog-head"><h2>Add folder tab</h2><button type="button" class="round-button" data-close>×</button></div>
+    <input type="hidden" id="tabPage" /><label>Tab name<input id="tabName" maxlength="40" required /></label>
+    <div class="dialog-actions"><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Add</button></div>
+  </form></dialog>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
 </body>
 </html>

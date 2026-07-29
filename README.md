@@ -1,25 +1,28 @@
-# Skyblock Daily Tracker
+# SkyBlock Task Menu
 
-A free static website for tracking Hypixel Skyblock daily tasks. The layout uses nested folders:
+A free static website for GitHub Pages. Data stays in the browser and can be exported as a JSON backup.
 
-**Skill folder → Group box → Inner tab → Task**
+## Update an existing GitHub Pages site
 
-## Publish an update to GitHub Pages
+1. Open the live site and use **History → Export backup**.
+2. Unzip this package.
+3. In the existing GitHub repository, choose **Add file → Upload files**.
+4. Upload `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `service-worker.js`, and this README.
+5. Commit the changes. GitHub Pages will redeploy automatically.
+6. Reload the live site. Existing version-1/version-2 browser data is migrated automatically.
 
-1. Unzip this download.
-2. Open your existing GitHub repository.
-3. Choose **Add file → Upload files**.
-4. Upload all files from this folder and allow them to replace the older versions.
-5. Commit the changes to `main`.
-6. GitHub Pages will update automatically.
+## Features
 
-Your checkbox history is stored in your browser, not in these code files. This version migrates tasks from the older layout by placing them in a `General` group and `Daily` inner tab when those values did not previously exist.
-
-## Adding items quickly
-
-- Click the `+` folder tab to add a skill.
-- Click **Add group box** at the bottom of a skill.
-- Click the small `+` beside a group's inner tabs to add another tab.
-- Click **+ Task** inside a group to add a task directly to the selected inner tab.
-
-Use **History → Export backup** periodically to protect your local data.
+- Separate Today and Goals folder tabs
+- Square Hypixel-style panels and corner accents
+- Editable rarity names and hex colors
+- Rarity outlines on groups and tasks
+- Every task can gain checklist parts using its `+` button
+- Parent completion requires every checklist part
+- Daily history and reset behavior
+- Long-term Goals with compact completion dates
+- Active and completed copies of partially completed goal groups
+- Completed goal groups use their own rarity
+- Goal folder tabs automatically adopt the highest completed-task rarity
+- Overall and per-folder progress bars
+- Import/export backups
