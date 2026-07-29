@@ -28,3 +28,7 @@ This complete build uses a new browser-storage key so it starts clean instead of
 Enter the Minecraft username and Hypixel API key under **Settings → Profile setup**. The key is stored in that browser's local storage and is not included in the repository files. Automatic checks can run every 5, 10, or 30 minutes.
 
 The item catalog is loaded from Hypixel's live SkyBlock resource endpoint. Recipe metadata is not available for every item, so recipes can also be entered manually. Recursive calculations still work for all manually saved recipes.
+
+
+## Cache repair in v14
+Assets use matching versioned URLs and the service worker is network-first. This prevents an older app.js from being combined with a newer index.html or styles.css. Tab and page renders also explicitly restore all frame ornaments.

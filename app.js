@@ -153,6 +153,9 @@ function renderPage(page){
     html+=gs.map(g=>groupMarkup(g,page,dateKey(),true)).join("");
   }else html=gs.map(g=>groupMarkup(g,page)).join("");
   document.querySelector(`#${page}Content`).innerHTML=html||`<div class="empty-state">No groups yet. Add one above.</div>`;
+  // innerHTML replacement removes generated ornaments. Rebuild them after the
+  // complete tab and content render rather than relying only on observation.
+  requestAnimationFrame(()=>decorateFrames(document.querySelector(`#${page}View`)));
 }
 
 function datesForRange(count){const out=[];const today=new Date();for(let i=count-1;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);out.push(dateKey(d))}return out}
@@ -322,8 +325,8 @@ function exportBackup(){const b=new Blob([JSON.stringify({...state,exportedAt:ne
 
 addEventListener("click",e=>{
   if(e.target.closest("summary button")){e.preventDefault();e.stopPropagation();}
-  const view=e.target.closest("[data-view]");if(view){document.querySelectorAll(".page-tab,.view").forEach(x=>x.classList.remove("active"));view.classList.add("active");document.querySelector(`#${view.dataset.view}View`).classList.add("active")}
-  const tab=e.target.closest("[data-tab-page]");if(tab){active[tab.dataset.tabPage]=tab.dataset.tabId;if(tab.dataset.tabPage==="goals")active.goalSubtab=null;renderPage(tab.dataset.tabPage)}
+  const view=e.target.closest("[data-view]");if(view){document.querySelectorAll(".page-tab,.view").forEach(x=>x.classList.remove("active"));view.classList.add("active");const targetView=document.querySelector(`#${view.dataset.view}View`);targetView.classList.add("active");requestAnimationFrame(()=>decorateFrames(targetView))}
+  const tab=e.target.closest("[data-tab-page]");if(tab){active[tab.dataset.tabPage]=tab.dataset.tabId;if(tab.dataset.tabPage==="goals")active.goalSubtab=null;renderPage(tab.dataset.tabPage);requestAnimationFrame(()=>decorateFrames(document.querySelector(`#${tab.dataset.tabPage}View`)))}
   const subtab=e.target.closest("[data-goal-subtab]");if(subtab){active.goalSubtab=subtab.dataset.goalSubtab;renderPage("goals")}
   const addSub=e.target.closest("[data-add-goal-subtab]");if(addSub){document.querySelector("#subtabParent").value=addSub.dataset.addGoalSubtab;document.querySelector("#subtabName").value="";document.querySelector("#subtabDialog").showModal()}
   const stageBtn=e.target.closest("[data-goal-stage]");if(stageBtn)setGoalStage(state.tasks.find(t=>t.id===stageBtn.dataset.goalStage),Number(stageBtn.dataset.goalDir));
@@ -378,7 +381,9 @@ document.querySelector("#taskApiEnabled").onchange=syncApiFields;document.queryS
 document.querySelector("#addRecipeProject").onclick=()=>openRecipe();document.querySelector("#importApiRecipe").onclick=tryImportApiRecipe;document.querySelector("#recipeForm").onsubmit=e=>{if(!saveRecipe())e.preventDefault()};document.querySelector("#deleteRecipeProject").onclick=()=>{const id=document.querySelector("#recipeId").value;if(id&&confirm("Delete this recipe project?")){state.recipes=state.recipes.filter(x=>x.id!==id);save();document.querySelector("#recipeDialog").close();renderRecipes()}};
 document.querySelector("#holdingSearch").oninput=renderHoldings;document.querySelector("#saveHoldingOverride").onclick=()=>{const item=resolveCatalogItem(document.querySelector("#holdingItem").value),id=item?.id||document.querySelector("#holdingItem").value.trim().toUpperCase().replace(/[^A-Z0-9]+/g,"_");if(!id)return;state.holdingOverrides[id]=Math.max(0,Number(document.querySelector("#holdingAmount").value)||0);save();renderRecipes();toast("Holding override saved")};document.querySelector("#refreshRecipeData").onclick=()=>refreshProfile(false);
 
-if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("./service-worker.js?v=14").then(reg=>reg.update()).catch(()=>{});
+}
 
 /* Render saved/local data immediately. Network catalog refresh runs afterward and must never block startup. */
 renderAll();
