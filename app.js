@@ -204,3 +204,24 @@ document.querySelector("#rarityEditor").addEventListener("change",e=>{const row=
 document.querySelector("#exportBackup").onclick=exportBackup;document.querySelector("#importBackup").onclick=()=>document.querySelector("#importFile").click();document.querySelector("#importFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{try{state=migrate(JSON.parse(reader.result));active={today:null,goals:null};save();renderAll();toast("Backup imported")}catch(err){alert("That is not a valid tracker backup.")}};reader.readAsText(f)};
 if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
 renderAll();
+
+/* Attach the reusable four-corner frame ornament to every framed surface. */
+function decorateFrames(root=document){
+  root.querySelectorAll('.pixel-panel,.group-card,.task-card,.settings-card,.summary-box,.history-skill,.folder-tab,.page-tab').forEach(el=>{
+    if(el.dataset.cornerFrame==='1')return;
+    el.dataset.cornerFrame='1';
+    for(const pos of ['tl','tr','br','bl']){
+      const corner=document.createElement('i');
+      corner.className=`frame-corner ${pos}`;
+      corner.setAttribute('aria-hidden','true');
+      el.appendChild(corner);
+    }
+  });
+}
+const frameObserver=new MutationObserver(records=>{
+  for(const record of records){
+    for(const node of record.addedNodes){if(node.nodeType===1)decorateFrames(node)}
+  }
+});
+frameObserver.observe(document.body,{childList:true,subtree:true});
+decorateFrames();
