@@ -234,7 +234,7 @@ function decorateFrames(root=document){
       const corner=document.createElement('i');
       corner.className=`frame-corner ${pos}`;
       corner.setAttribute('aria-hidden','true');
-      corner.innerHTML='<b class="corner-dot"></b><b class="corner-core"></b><b class="corner-arm-x"></b><b class="corner-arm-y"></b>';
+      corner.innerHTML='<b class="corner-dot"></b><b class="corner-arm-x"></b><b class="corner-arm-y"></b>';
       el.appendChild(corner);
     }
   });

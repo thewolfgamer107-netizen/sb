@@ -18,16 +18,16 @@ body{font-family:"Pixelify Sans","Courier New",ui-monospace,monospace;font-size:
 .page-tab:nth-child(1){--frame-color:#ffaa00}.page-tab:nth-child(2){--frame-color:#aa00aa}.page-tab:nth-child(3){--frame-color:#55ffff}.page-tab:nth-child(4){--frame-color:#aaaaaa}
 .page-tab.active{background:var(--panel);color:var(--frame-color);filter:brightness(1.15)}
 .folder-tabs{align-items:center;gap:10px;padding:16px 12px;min-height:76px;overflow-x:auto;overflow-y:visible}
-.folder-tab{min-width:114px;padding:13px 18px;background:#070e19;color:var(--frame-color);font-weight:700;font-size:1rem}
+.folder-tab{width:132px;min-width:132px;max-width:132px;flex:0 0 132px;padding:13px 12px;background:#070e19;color:var(--frame-color);font-weight:700;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .folder-tab.active{background:var(--panel);padding:13px 18px;filter:brightness(1.16)}
-.folder-tab.add{min-width:52px;padding-inline:15px}
+.folder-tab.add{width:52px;min-width:52px;max-width:52px;flex-basis:52px;padding-inline:15px}
 
 /* Canonical top-left ornament. Other corners are exact rotations. */
 .frame-corner{position:absolute;z-index:8;width:var(--corner-size);height:var(--corner-size);color:var(--frame-color);pointer-events:none;transform-origin:center}
 .frame-corner.tl{top:-8px;left:-8px}.frame-corner.tr{top:-8px;right:-8px;transform:rotate(90deg)}.frame-corner.br{right:-8px;bottom:-8px;transform:rotate(180deg)}.frame-corner.bl{left:-8px;bottom:-8px;transform:rotate(270deg)}
 .frame-corner .corner-dot{position:absolute;left:1px;top:1px;width:5px;height:5px;background:currentColor}
 /* Inverted L: its empty pocket faces the actual corner. */
-.frame-corner .corner-core{position:absolute;left:8px;top:8px;width:10px;height:10px;border-right:2px solid currentColor;border-bottom:2px solid currentColor}
+.frame-corner .corner-core{display:none}
 /* Detached arms: each begins after a 3px gap, protrudes across the frame, then turns away from the corner. */
 .frame-corner .corner-arm-x{position:absolute;left:21px;top:8px;width:8px;height:7px;border-top:2px solid currentColor;border-right:2px solid currentColor}
 .frame-corner .corner-arm-y{position:absolute;left:8px;top:21px;width:7px;height:8px;border-left:2px solid currentColor;border-bottom:2px solid currentColor}
@@ -41,4 +41,4 @@ body{font-family:"Pixelify Sans","Courier New",ui-monospace,monospace;font-size:
 .goal-completion-field{margin-top:14px;padding:12px;border:1px solid var(--outline);background:var(--inner)}.check-option{display:flex!important;grid-template-columns:none!important;flex-direction:row;align-items:center;gap:9px}.check-option input{width:auto!important}.goal-completion-field p{margin-bottom:0}
 
 @media(max-width:1200px){.today-dashboard{grid-template-columns:1fr}.weekly-panel{position:relative;top:auto}.scroll-space{max-height:none}}
-@media(max-width:720px){body{font-size:16px}.folder-tabs{gap:8px}.folder-tab{min-width:94px}.page-tab{padding:10px 13px}.settings-grid,.form-grid{grid-template-columns:1fr}.site-header{align-items:flex-start}.tracker-toolbar,.section-head{align-items:flex-start;flex-direction:column}.heat-cell{width:16px;height:16px}.frame-corner{display:none}}
+@media(max-width:720px){body{font-size:16px}.folder-tabs{gap:8px}.folder-tab{width:112px;min-width:112px;max-width:112px;flex-basis:112px}.page-tab{padding:10px 13px}.settings-grid,.form-grid{grid-template-columns:1fr}.site-header{align-items:flex-start}.tracker-toolbar,.section-head{align-items:flex-start;flex-direction:column}.heat-cell{width:16px;height:16px}.frame-corner{display:none}}
