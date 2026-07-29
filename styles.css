@@ -1,61 +1,44 @@
 :root{--background:#030915;--outline:#5a6d87;--panel:#071525;--group:#08182a;--task:#0a1d31;--inner:#091a2d;--text:#e8edf4;--muted:#8d9caf;--accent:#55ffff;--danger:#ff5555;--pixel:2px}*{box-sizing:border-box}html{background:var(--background)}body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#0d2036 0,var(--background) 52%);color:var(--text);font-family:"Trebuchet MS",Arial,sans-serif}button,input,select,textarea{font:inherit}.app-shell,.site-header{width:min(1180px,calc(100% - 24px));margin-inline:auto}.site-header{margin-top:18px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}.site-header h1,.section-head h2{margin:2px 0 0}.kicker{margin:0;color:#ffaa00;font-weight:800;letter-spacing:.14em;font-size:.72rem}.header-tools{display:flex;gap:14px;align-items:center}.pixel-panel,.group-card,.task-card,.settings-card,.summary-box{position:relative;border:2px solid var(--outline);background:var(--panel);box-shadow:inset 0 0 0 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);border-radius:0}.pixel-panel:before,.pixel-panel:after,.group-card:before,.group-card:after{content:"";position:absolute;width:9px;height:9px;border-color:inherit;pointer-events:none}.pixel-panel:before,.group-card:before{left:-2px;top:-2px;border-left:4px solid;border-top:4px solid}.pixel-panel:after,.group-card:after{right:-2px;bottom:-2px;border-right:4px solid;border-bottom:4px solid}.page-tabs{margin-top:12px;padding:8px;display:flex;gap:8px}.page-tab,.small-button,.primary-button,.danger-button,.icon-button,.round-button{border:1px solid #52647e;background:#121829;color:var(--text);padding:8px 12px;cursor:pointer;border-radius:7px}.page-tab.active,.primary-button{background:#12334c;border-color:var(--accent);color:#fff}.danger-button{border-color:#813e4b;color:#ff9aaa}.round-button{width:36px;height:36px;padding:0;border-radius:50%}.view{display:none;margin:14px 0 36px}.view.active{display:block}.tracker-frame{padding:0 14px 14px}.folder-tabs{display:flex;align-items:flex-end;gap:4px;min-height:62px;overflow-x:auto;padding:12px 2px 0}.folder-tab{--rarity:var(--outline);position:relative;min-width:110px;border:2px solid var(--rarity);border-bottom:0;background:#0a1120;color:var(--rarity);padding:13px 18px 11px;font-weight:800;cursor:pointer;border-radius:0}.folder-tab.active{background:var(--panel);z-index:2;padding-top:17px}.folder-tab.add{min-width:52px;color:#55ffff}.folder-tab:before{content:"";position:absolute;left:8px;top:-7px;width:38px;height:7px;border:2px solid var(--rarity);border-bottom:0;background:inherit}.tracker-toolbar,.section-head,.history-controls{display:flex;align-items:center;justify-content:space-between;gap:12px}.tracker-toolbar{border-top:2px solid var(--outline);padding:12px 2px}.compact-progress{font-weight:800}.skill-progress{padding:10px 12px;background:var(--inner);border:1px solid var(--outline);margin-bottom:12px}.progress-line{height:13px;border:1px solid #506078;background:#030915;margin-top:6px}.progress-line span{display:block;height:100%;background:var(--progress-color,var(--accent));width:0}.scroll-space{max-height:64vh;overflow:auto;padding-right:5px}.group-card{background:var(--group);border-color:var(--rarity,var(--outline));padding:14px;margin:0 0 14px}.group-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:12px}.group-title{margin:0;color:var(--rarity);font-size:1.12rem}.group-actions,.task-actions{display:flex;gap:6px;flex-wrap:wrap}.task-list{display:grid;gap:9px}.task-card{--rarity:var(--outline);background:var(--task);border-color:var(--rarity);padding:11px}.task-row{display:flex;gap:10px;align-items:center}.task-row label{display:flex;gap:9px;align-items:center;flex:1;color:var(--rarity);font-weight:800}.task-meta{color:var(--muted);font-size:.77rem;white-space:nowrap}.task-parts{margin:9px 0 0 28px;display:grid;gap:6px}.part-row{display:flex;align-items:center;gap:8px;color:#cbd5e2}.part-row label{display:flex;align-items:center;gap:8px;flex:1}.part-weight{color:var(--muted);font-size:.76rem}.completed-date{font-size:.73rem;color:var(--rarity)}.center-actions{text-align:center;margin:12px}.section-panel{padding:18px;margin-bottom:14px}.inline-control{display:flex;gap:8px;align-items:center}.heatmap-wrap{overflow:auto;margin-top:16px;padding-bottom:8px}.heatmap-grid{display:grid;gap:3px;align-items:center;min-width:max-content}.heatmap-corner,.heatmap-label{position:sticky;left:0;background:var(--panel);z-index:2}.heatmap-label{padding-right:10px;min-width:115px;white-space:nowrap;font-weight:800}.heatmap-day{font-size:.66rem;text-align:center;color:var(--muted);height:28px;writing-mode:vertical-rl;transform:rotate(180deg)}.heat-cell{width:19px;height:19px;border:1px solid rgba(255,255,255,.16);background:#111827;cursor:pointer}.heat-cell.no-data{opacity:.3}.week-gap{margin-left:5px}.rarity-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.legend-chip{display:flex;align-items:center;gap:6px;border:1px solid #44536b;padding:5px 8px;background:var(--inner);font-size:.76rem}.legend-swatch{width:13px;height:13px;border:1px solid currentColor;background:currentColor}.history-archive-panel{margin-top:14px}.history-controls{justify-content:flex-start;margin:14px 0}.history-controls label,.settings-card label,dialog label{display:grid;gap:6px}.summary-box{padding:12px;background:var(--inner)}.history-content{display:grid;gap:10px;margin-top:12px}.history-skill{padding:10px;border:1px solid var(--outline);background:var(--inner)}.settings-grid{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(300px,1.2fr);gap:14px;margin-top:15px}.settings-card{padding:14px;background:var(--inner)}.settings-card h3{margin-top:0}.settings-card label{margin:9px 0}.settings-card input,.settings-card select,dialog input,dialog select,dialog textarea,.inline-control select,.history-controls input{width:100%;background:#050d18;color:var(--text);border:1px solid #52647e;padding:8px}.rarity-row{display:grid;grid-template-columns:1fr 52px auto;gap:8px;align-items:center;margin:8px 0}.manage-section{margin-top:14px}.manage-page{margin-top:15px}.manage-tab,.manage-item{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #34445b;padding:9px 0}.manage-item{padding-left:16px}.manage-path,.muted{color:var(--muted);font-size:.82rem}.empty-state{padding:24px;text-align:center;border:1px dashed #52647e;color:var(--muted)}dialog{width:min(620px,calc(100% - 24px));background:var(--panel);color:var(--text);border:2px solid var(--outline);padding:18px;border-radius:0}dialog::backdrop{background:rgba(0,0,0,.7)}.dialog-head,.dialog-actions{display:flex;align-items:center;gap:10px}.dialog-head{justify-content:space-between}.dialog-actions{margin-top:15px}.dialog-spacer{flex:1}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hidden{display:none!important}.toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,30px);opacity:0;background:#071525;border:2px solid #55ffff;padding:10px 16px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}input[type=checkbox]{accent-color:var(--rarity,#55ffff)}@media(max-width:720px){.settings-grid,.form-grid{grid-template-columns:1fr}.site-header{align-items:flex-start}.tracker-toolbar,.section-head{align-items:flex-start;flex-direction:column}.folder-tab{min-width:92px}.heat-cell{width:16px;height:16px}.scroll-space{max-height:none}}
 
-/* 2026 frame polish: one rarity-colored line, symmetrical four-corner ornaments */
-:root{--frame-width:2px;--corner-unit:5px}
-body{font-family:"Courier New",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.01em}
+/* Desktop SkyBlock menu pass */
+:root{--frame-width:2px;--corner-size:27px}
+body{font-family:"Pixelify Sans","Courier New",ui-monospace,monospace;font-size:17px;letter-spacing:.015em;background-color:var(--background);background-image:linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px),radial-gradient(circle at top,#0d2036 0,var(--background) 58%);background-size:28px 28px,28px 28px,auto}
+.app-shell,.site-header{width:min(1680px,calc(100% - 32px))}
 
 .pixel-panel,.group-card,.task-card,.settings-card,.summary-box,.history-skill,.folder-tab,.page-tab{
-  --frame-color:var(--outline);
-  position:relative;
-  border:var(--frame-width) solid var(--frame-color)!important;
-  border-radius:0!important;
-  box-shadow:0 8px 24px rgba(0,0,0,.28)!important;
+  --frame-color:var(--outline);position:relative;border:var(--frame-width) solid var(--frame-color)!important;border-radius:0!important;box-shadow:0 8px 24px rgba(0,0,0,.28)!important;overflow:visible
 }
 .pixel-panel,.settings-card,.summary-box,.history-skill{--frame-color:var(--outline)}
 .group-card,.task-card{--frame-color:var(--rarity,var(--outline))}
-.folder-tab{--frame-color:var(--rarity,var(--outline));border-bottom:var(--frame-width) solid var(--frame-color)!important}
-
-/* Disable the older two-corner and folder-lip graphics. */
+.folder-tab{--frame-color:var(--rarity,var(--outline))}
 .pixel-panel:before,.pixel-panel:after,.group-card:before,.group-card:after,.folder-tab:before{content:none!important}
 
-/* Skill selectors are deliberately simple rectangles rather than folder shapes. */
-.folder-tabs{align-items:center;gap:10px;padding:12px 8px;min-height:66px;overflow-y:visible}
-.folder-tab{min-width:108px;padding:13px 18px;background:#070e19;color:var(--frame-color);font-weight:900}
-.folder-tab.active{background:var(--panel);padding:13px 18px;filter:brightness(1.15)}
-.folder-tab.add{min-width:50px;padding-inline:14px}
-
-/* Main navigation uses the same rectangle language. */
 .page-tabs{gap:10px;padding:10px;overflow:visible}
-.page-tab{background:#070e19;padding:12px 22px;font-weight:900;color:var(--frame-color)}
+.page-tab{background:#070e19;padding:12px 24px;font-weight:700;color:var(--frame-color);font-size:1.05rem}
 .page-tab:nth-child(1){--frame-color:#ffaa00}.page-tab:nth-child(2){--frame-color:#aa00aa}.page-tab:nth-child(3){--frame-color:#55ffff}.page-tab:nth-child(4){--frame-color:#aaaaaa}
 .page-tab.active{background:var(--panel);color:var(--frame-color);filter:brightness(1.15)}
+.folder-tabs{align-items:center;gap:10px;padding:16px 12px;min-height:76px;overflow-x:auto;overflow-y:visible}
+.folder-tab{min-width:114px;padding:13px 18px;background:#070e19;color:var(--frame-color);font-weight:700;font-size:1rem}
+.folder-tab.active{background:var(--panel);padding:13px 18px;filter:brightness(1.16)}
+.folder-tab.add{min-width:52px;padding-inline:15px}
 
-/* Four identical corner ornaments, one pixel inside the frame. */
-.frame-corner{position:absolute;z-index:4;width:15px;height:15px;color:var(--frame-color);pointer-events:none}
-.frame-corner:before,.frame-corner:after{content:"";position:absolute;display:block}
-.frame-corner:before{width:9px;height:9px}
-.frame-corner:after{width:4px;height:4px;background:currentColor}
-.frame-corner.tl{top:1px;left:1px;border-top:2px solid currentColor;border-left:2px solid currentColor}
-.frame-corner.tl:before{top:4px;left:4px;border-top:2px solid currentColor;border-left:2px solid currentColor}
-.frame-corner.tl:after{top:-7px;left:-7px}
-.frame-corner.tr{top:1px;right:1px;border-top:2px solid currentColor;border-right:2px solid currentColor}
-.frame-corner.tr:before{top:4px;right:4px;border-top:2px solid currentColor;border-right:2px solid currentColor}
-.frame-corner.tr:after{top:-7px;right:-7px}
-.frame-corner.br{right:1px;bottom:1px;border-right:2px solid currentColor;border-bottom:2px solid currentColor}
-.frame-corner.br:before{right:4px;bottom:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor}
-.frame-corner.br:after{right:-7px;bottom:-7px}
-.frame-corner.bl{left:1px;bottom:1px;border-left:2px solid currentColor;border-bottom:2px solid currentColor}
-.frame-corner.bl:before{left:4px;bottom:4px;border-left:2px solid currentColor;border-bottom:2px solid currentColor}
-.frame-corner.bl:after{left:-7px;bottom:-7px}
+/* Canonical top-left ornament. Other corners are exact rotations. */
+.frame-corner{position:absolute;z-index:8;width:var(--corner-size);height:var(--corner-size);color:var(--frame-color);pointer-events:none;transform-origin:center}
+.frame-corner.tl{top:-8px;left:-8px}.frame-corner.tr{top:-8px;right:-8px;transform:rotate(90deg)}.frame-corner.br{right:-8px;bottom:-8px;transform:rotate(180deg)}.frame-corner.bl{left:-8px;bottom:-8px;transform:rotate(270deg)}
+.frame-corner .corner-dot{position:absolute;left:1px;top:1px;width:5px;height:5px;background:currentColor}
+/* Inverted L: its empty pocket faces the actual corner. */
+.frame-corner .corner-core{position:absolute;left:8px;top:8px;width:10px;height:10px;border-right:2px solid currentColor;border-bottom:2px solid currentColor}
+/* Detached arms: each begins after a 3px gap, protrudes across the frame, then turns away from the corner. */
+.frame-corner .corner-arm-x{position:absolute;left:21px;top:8px;width:8px;height:7px;border-top:2px solid currentColor;border-right:2px solid currentColor}
+.frame-corner .corner-arm-y{position:absolute;left:8px;top:21px;width:7px;height:8px;border-left:2px solid currentColor;border-bottom:2px solid currentColor}
 
-/* Keep outside dots visible and prevent accidental clipping. */
-.tracker-frame,.section-panel,.group-card,.task-card,.settings-card,.summary-box,.history-skill,.page-tabs{overflow:visible}
-.scroll-space{padding:9px 10px 18px}
-.group-card{margin:5px 5px 18px;padding:16px}
-.task-card{margin:3px;padding:12px}
+.today-dashboard{display:grid;grid-template-columns:minmax(620px,1.02fr) minmax(600px,.98fr);gap:14px;align-items:start}
+.today-primary{min-width:0}.tracker-frame{padding:0 14px 14px;min-width:0}.weekly-panel{padding:18px;min-width:0;position:sticky;top:12px}
+.weekly-head{margin-bottom:14px}.weekly-overview{overflow-x:auto;padding:8px 4px 14px}.weekly-grid{display:grid;grid-template-columns:minmax(98px,1.15fr) repeat(7,minmax(58px,1fr));gap:3px;min-width:610px;align-items:stretch}.weekly-grid .week-label{padding:9px 8px;color:var(--muted);text-align:center}.weekly-grid .week-skill{display:flex;align-items:center;padding:9px 8px;font-weight:700;background:var(--inner);border:1px solid color-mix(in srgb,var(--skill-color) 70%,#222)}.weekly-cell{min-height:48px;border:1px solid var(--cell-color);background:color-mix(in srgb,var(--cell-color) 24%,var(--inner));color:var(--cell-color);font-family:inherit;font-weight:700;cursor:pointer;border-radius:0}.weekly-cell:hover{background:color-mix(in srgb,var(--cell-color) 38%,var(--inner))}.weekly-cell.no-data{opacity:.38}.compact-legend{margin-top:4px}.compact-legend .legend-chip{padding:4px 6px;font-size:.72rem}.weekly-tip{text-align:center;margin:12px 0 0}
 
-/* Remove secondary gray outlines from progress and nested surfaces. */
-.skill-progress,.progress-line,.heat-cell,.legend-chip,input,select,textarea,dialog{border-color:var(--outline)}
-.group-card .task-card{box-shadow:none!important}
+.tracker-toolbar{border-top:2px solid var(--outline);padding:12px 4px}.skill-progress{padding:10px 12px;background:var(--inner);border:1px solid var(--outline);margin-bottom:14px}.scroll-space{max-height:67vh;overflow:auto;padding:10px 12px 20px}.group-card{margin:7px 7px 20px;padding:17px;background:var(--group)}.task-card{margin:4px;padding:12px;background:var(--task);box-shadow:none!important}.group-title{font-weight:700}.task-row label{font-weight:600}.progress-line{border-radius:0}.section-panel{padding:20px}.settings-card{padding:16px}
 
-@media(max-width:720px){.folder-tabs{gap:8px}.folder-tab{min-width:92px}.page-tab{padding:10px 13px}.frame-corner{transform:scale(.9)}}
+.goal-completion-field{margin-top:14px;padding:12px;border:1px solid var(--outline);background:var(--inner)}.check-option{display:flex!important;grid-template-columns:none!important;flex-direction:row;align-items:center;gap:9px}.check-option input{width:auto!important}.goal-completion-field p{margin-bottom:0}
+
+@media(max-width:1200px){.today-dashboard{grid-template-columns:1fr}.weekly-panel{position:relative;top:auto}.scroll-space{max-height:none}}
+@media(max-width:720px){body{font-size:16px}.folder-tabs{gap:8px}.folder-tab{min-width:94px}.page-tab{padding:10px 13px}.settings-grid,.form-grid{grid-template-columns:1fr}.site-header{align-items:flex-start}.tracker-toolbar,.section-head{align-items:flex-start;flex-direction:column}.heat-cell{width:16px;height:16px}.frame-corner{display:none}}

@@ -4,12 +4,12 @@ A static, offline-capable task and goals tracker designed for GitHub Pages.
 
 ## Features
 
-- Hypixel-style square panels and rarity-colored folder tabs
+- Hypixel-style square rarity frames with mirrored four-corner ornaments
 - Separate Today and Goals layouts
 - Weighted task progress, including weights for checklist parts
-- Daily skill heat map with 1-week, 1-month, and 1-year ranges
+- Connected 7-day overview on Today, plus 1-week, 1-month, and 1-year History heat maps
 - Automatic rarity colors based on weighted completion percentage
-- Goal completion dates and completed-group copies
+- Goal completion dates, completed-group copies, and an option for goals completed before creation
 - Editable colors for the page, panels, groups, tasks, inner areas, outlines, and rarities
 - Archive and permanent-delete controls
 - Browser-local history with JSON backup and restore
@@ -29,3 +29,7 @@ Export a backup from **History** first. Then replace the repository files with t
 ## Data safety
 
 Data is stored locally for each browser and website address. Export backups regularly, especially before clearing browser data, changing the GitHub Pages URL, or testing permanent deletion.
+
+## Font
+
+The interface uses the open-source Pixelify Sans web font when an internet connection is available, with a monospace fallback for offline use.

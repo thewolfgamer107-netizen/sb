@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#071525" />
   <title>SkyBlock Task Menu</title>
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -23,13 +26,23 @@
     </nav>
 
     <section class="view active" id="todayView">
-      <div class="tracker-frame pixel-panel">
-        <div class="folder-tabs" id="todayTabs"></div>
-        <div class="tracker-toolbar"><div id="todayOverall" class="compact-progress"></div><button class="small-button" data-add-group="today">+ Group</button></div>
-        <div class="skill-progress" id="todaySkillProgress"></div>
-        <div class="scroll-space" id="todayContent"></div>
+      <div class="today-dashboard">
+        <div class="today-primary">
+          <div class="tracker-frame pixel-panel">
+            <div class="folder-tabs" id="todayTabs"></div>
+            <div class="tracker-toolbar"><div id="todayOverall" class="compact-progress"></div><button class="small-button" data-add-group="today">+ Group</button></div>
+            <div class="skill-progress" id="todaySkillProgress"></div>
+            <div class="scroll-space" id="todayContent"></div>
+          </div>
+          <div class="center-actions"><button class="danger-button" id="resetToday">Reset today</button></div>
+        </div>
+        <aside class="pixel-panel weekly-panel">
+          <div class="section-head weekly-head"><div><p class="kicker">WEIGHTED COMPLETION</p><h2>Weekly Overview</h2></div><button class="small-button" id="openHistoryFromWeek">Full history</button></div>
+          <div id="todayWeeklyOverview" class="weekly-overview"></div>
+          <div id="todayWeeklyLegend" class="rarity-legend compact-legend"></div>
+          <p class="weekly-tip muted">Select a day to open its detailed history.</p>
+        </aside>
       </div>
-      <div class="center-actions"><button class="danger-button" id="resetToday">Reset today</button></div>
     </section>
 
     <section class="view" id="goalsView">
@@ -86,6 +99,11 @@
     <div class="form-grid"><label>Folder tab<select id="taskTab"></select></label><label>Group<select id="taskGroup"></select></label></div>
     <div class="form-grid"><label>Task rarity<select id="taskRarity"></select></label><label>Completion weight<input id="taskWeight" type="number" min="0" step="0.25" value="1" /></label></div>
     <label>Checklist parts <span class="muted">(optional; one per line as Name | Weight)</span><textarea id="taskParts" rows="7" placeholder="Collect materials | 2&#10;Forge components | 4&#10;Apply upgrades | 1"></textarea></label>
+    <section class="goal-completion-field hidden" id="goalCompletionField">
+      <label class="check-option"><input type="checkbox" id="taskCompletedBeforeCreation" /> Completed before it was added to the tracker</label>
+      <label id="taskCompletedDateLabel">Original completion date <input type="date" id="taskCompletedDate" /></label>
+      <p class="muted">This marks the whole goal and all of its checklist parts complete immediately.</p>
+    </section>
     <div class="dialog-actions"><button type="button" class="danger-button hidden" id="deleteTaskDialog">Permanent delete</button><span class="dialog-spacer"></span><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
   </form></dialog>
 
