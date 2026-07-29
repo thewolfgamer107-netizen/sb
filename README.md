@@ -32,3 +32,10 @@ The item catalog is loaded from Hypixel's live SkyBlock resource endpoint. Recip
 
 ## Cache repair in v14
 Assets use matching versioned URLs and the service worker is network-first. This prevents an older app.js from being combined with a newer index.html or styles.css. Tab and page renders also explicitly restore all frame ornaments.
+
+
+## v15 fixes
+- Background profile refreshes no longer show blocking alerts when an endpoint returns HTML or malformed data.
+- API responses are validated before JSON parsing and now produce useful manual-refresh errors.
+- Startup searches previous SkyBlock tracker localStorage namespaces and restores the richest valid saved state.
+- Local data is rendered repeatedly during boot, independently of the item catalog network request.

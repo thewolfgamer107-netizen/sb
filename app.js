@@ -37,7 +37,33 @@ function esc(s=""){return String(s).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt
 function dateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function parseDate(key){const [y,m,d]=key.split("-").map(Number);return new Date(y,m-1,d)}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
-function loadState(){try{const p=JSON.parse(localStorage.getItem(STORAGE_KEY));if(p?.tasks&&p?.days)return migrate(p)}catch(e){}return clone(defaults)}
+function trackerStateScore(value){
+  if(!value||typeof value!=="object"||!Array.isArray(value.tasks)||!value.days)return -1;
+  const tabs=(value.tabs?.today?.length||0)+(value.tabs?.goals?.length||0);
+  const groups=Array.isArray(value.groups)?value.groups.length:0;
+  const tasks=value.tasks.length;
+  const history=Object.keys(value.days||{}).length;
+  return tasks*1000+groups*100+tabs*10+history;
+}
+function loadState(){
+  const candidates=[];
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(!key||(!/skyblock/i.test(key)&&key!==STORAGE_KEY))continue;
+      try{
+        const parsed=JSON.parse(localStorage.getItem(key));
+        const score=trackerStateScore(parsed);
+        if(score>=0)candidates.push({key,parsed,score:score+(key===STORAGE_KEY?0.5:0)});
+      }catch(_e){}
+    }
+  }catch(_e){}
+  candidates.sort((a,b)=>b.score-a.score);
+  if(candidates.length){
+    try{return migrate(candidates[0].parsed)}catch(e){console.warn("Saved tracker migration failed",e)}
+  }
+  return clone(defaults)
+}
 function migrate(s){
   const n=s;
   n.version=8;
@@ -230,8 +256,21 @@ function renderProfile(){
   const unique=[];const seen=new Set();for(const x of entries){const k=`${x.path}:${x.value}`;if(!seen.has(k)){seen.add(k);unique.push(x)}}
   content.innerHTML=unique.length?`<div class="profile-data-grid">${unique.slice(0,120).map(x=>`<div class="profile-data-row"><span>${esc(x.key)}</span><strong>${esc(typeof x.value==="number"?x.value.toLocaleString():String(x.value))}</strong><small title="${esc(x.path)}">${esc(x.path)}</small></div>`).join("")}</div>`:`<div class="profile-placeholder"><strong>No matching ${esc(humanizeKey(activeProfileCategory))} fields found</strong><p>The API response for this profile may not expose this collection yet, or its field name may have changed.</p></div>`;
 }
+async function readJsonResponse(response,label="API request"){
+  const text=await response.text();
+  let data;
+  try{data=text?JSON.parse(text):null}catch(_e){
+    const type=response.headers.get("content-type")||"";
+    const hint=type.includes("text/html")||/^\s*</.test(text)?" The server returned a web page instead of API data; this is usually temporary, a proxy/rate-limit response, or a blocked browser request.":"";
+    throw new Error(`${label} returned invalid JSON.${hint}`);
+  }
+  return data;
+}
 async function resolveMinecraftUuid(username){
-  const r=await fetch(`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(username)}`);if(!r.ok)throw new Error("Minecraft username was not found");const data=await r.json();return data.id;
+  const r=await fetch(`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(username)}`);
+  const data=await readJsonResponse(r,"Minecraft username lookup");
+  if(!r.ok||!data?.id)throw new Error(data?.errorMessage||"Minecraft username was not found");
+  return data.id;
 }
 async function refreshProfile(silent=false){
   const username=state.settings.profileUsername?.trim(),key=state.settings.profileApiKey?.trim();if(!username||!key){if(!silent){toast("Add username and API key in Settings");document.querySelector('[data-view="settings"]').click()}return}
@@ -239,9 +278,13 @@ async function refreshProfile(silent=false){
   try{
     const uuid=await resolveMinecraftUuid(username);let r=await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}`,{headers:{"API-Key":key}});
     if(!r.ok)r=await fetch(`https://api.hypixel.net/v2/skyblock/profiles?uuid=${encodeURIComponent(uuid)}&key=${encodeURIComponent(key)}`);
-    const data=await r.json();if(!r.ok||data.success===false)throw new Error(data.cause||`Hypixel API error ${r.status}`);
-    const profiles=data.profiles||[];if(!profiles.some(p=>p.profile_id===state.settings.profileSelected))state.settings.profileSelected=profiles[0]?.profile_id||"";const profileId=state.settings.profileSelected||profiles[0]?.profile_id;let museum=null;if(profileId){try{let mr=await fetch(`https://api.hypixel.net/v2/skyblock/museum?profile=${encodeURIComponent(profileId)}`,{headers:{"API-Key":key}});if(!mr.ok)mr=await fetch(`https://api.hypixel.net/v2/skyblock/museum?profile=${encodeURIComponent(profileId)}&key=${encodeURIComponent(key)}`);if(mr.ok)museum=await mr.json()}catch(e){console.warn("Museum refresh failed",e)}}const previous=state.profileCache?.lastSave||0,lastSave=selectedMemberLastSave(profiles,uuid,profileId);state.profileCache={username,uuid,profiles,museum,fetchedAt:new Date().toISOString(),lastSave};await refreshResourceCatalog(false);applyApiRules();save();renderProfile();renderRecipes();if(!silent)toast("Profile refreshed");else if(lastSave&&lastSave!==previous)toast("Profile data updated")
-  }catch(err){console.error(err);alert(`Profile refresh failed: ${err.message}`)}finally{if(button){button.disabled=false;button.textContent="Refresh"}}
+    const data=await readJsonResponse(r,"Hypixel profile request");if(!r.ok||data?.success===false)throw new Error(data?.cause||`Hypixel API error ${r.status}`);
+    const profiles=data.profiles||[];if(!profiles.some(p=>p.profile_id===state.settings.profileSelected))state.settings.profileSelected=profiles[0]?.profile_id||"";const profileId=state.settings.profileSelected||profiles[0]?.profile_id;let museum=null;if(profileId){try{let mr=await fetch(`https://api.hypixel.net/v2/skyblock/museum?profile=${encodeURIComponent(profileId)}`,{headers:{"API-Key":key}});if(!mr.ok)mr=await fetch(`https://api.hypixel.net/v2/skyblock/museum?profile=${encodeURIComponent(profileId)}&key=${encodeURIComponent(key)}`);if(mr.ok)museum=await readJsonResponse(mr,"Hypixel museum request")}catch(e){console.warn("Museum refresh failed",e)}}const previous=state.profileCache?.lastSave||0,lastSave=selectedMemberLastSave(profiles,uuid,profileId);state.profileCache={username,uuid,profiles,museum,fetchedAt:new Date().toISOString(),lastSave};await refreshResourceCatalog(false);applyApiRules();save();renderProfile();renderRecipes();if(!silent)toast("Profile refreshed");else if(lastSave&&lastSave!==previous)toast("Profile data updated")
+  }catch(err){
+    console.error(err);
+    if(!silent)alert(`Profile refresh failed: ${err.message}`);
+    else console.warn("Automatic profile refresh skipped:",err.message);
+  }finally{if(button){button.disabled=false;button.textContent="Refresh"}}
 }
 
 function catalogItems(){return state.resourceCache?.items||[]}
@@ -249,7 +292,7 @@ function resolveCatalogItem(value){const q=String(value||"").trim().toLowerCase(
 function renderCatalogDatalist(){const el=document.querySelector("#apiItemNames");if(!el)return;el.innerHTML=catalogItems().slice(0,10000).map(x=>`<option value="${esc(x.name||x.id)}">${esc(x.id)}</option>`).join("")}
 async function refreshResourceCatalog(force=false){
   const age=Date.now()-new Date(state.resourceCache?.fetchedAt||0).getTime();if(!force&&state.resourceCache?.items?.length&&age<86400000){renderCatalogDatalist();return state.resourceCache}
-  try{const r=await fetch("https://api.hypixel.net/v2/resources/skyblock/items");const d=await r.json();if(!r.ok||d.success===false)throw new Error(d.cause||"Item resource request failed");state.resourceCache={lastUpdated:d.lastUpdated||null,fetchedAt:new Date().toISOString(),items:(d.items||[]).map(x=>({id:x.id,name:x.name||humanizeKey(x.id),tier:x.tier||x.rarity||"",recipe:x.recipe||x.recipes||x.craftingRecipe||x.crafting_recipe||null}))};save();renderCatalogDatalist();return state.resourceCache}catch(e){console.warn(e);renderCatalogDatalist();return state.resourceCache}
+  try{const r=await fetch("https://api.hypixel.net/v2/resources/skyblock/items");const d=await readJsonResponse(r,"Hypixel item catalog");if(!r.ok||d?.success===false)throw new Error(d?.cause||"Item resource request failed");state.resourceCache={lastUpdated:d.lastUpdated||null,fetchedAt:new Date().toISOString(),items:(d.items||[]).map(x=>({id:x.id,name:x.name||humanizeKey(x.id),tier:x.tier||x.rarity||"",recipe:x.recipe||x.recipes||x.craftingRecipe||x.crafting_recipe||null}))};save();renderCatalogDatalist();return state.resourceCache}catch(e){console.warn(e);renderCatalogDatalist();return state.resourceCache}
 }
 function selectedMemberLastSave(profiles,uuid,selected){const p=profiles.find(x=>x.profile_id===selected)||profiles[0];const m=p?.members?.[uuid]||p?.members?.[uuid?.replace(/-/g,"")];return Number(m?.last_save||m?.lastSave||0)}
 function flattenObject(root,prefix="",out=[]){if(root==null)return out;if(Array.isArray(root)){root.forEach((v,i)=>flattenObject(v,`${prefix}[${i}]`,out));return out}if(typeof root==="object"){for(const [k,v] of Object.entries(root))flattenObject(v,prefix?`${prefix}.${k}`:k,out);return out}out.push({path:prefix,value:root});return out}
@@ -382,17 +425,22 @@ document.querySelector("#addRecipeProject").onclick=()=>openRecipe();document.qu
 document.querySelector("#holdingSearch").oninput=renderHoldings;document.querySelector("#saveHoldingOverride").onclick=()=>{const item=resolveCatalogItem(document.querySelector("#holdingItem").value),id=item?.id||document.querySelector("#holdingItem").value.trim().toUpperCase().replace(/[^A-Z0-9]+/g,"_");if(!id)return;state.holdingOverrides[id]=Math.max(0,Number(document.querySelector("#holdingAmount").value)||0);save();renderRecipes();toast("Holding override saved")};document.querySelector("#refreshRecipeData").onclick=()=>refreshProfile(false);
 
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("./service-worker.js?v=14").then(reg=>reg.update()).catch(()=>{});
+  navigator.serviceWorker.register("./service-worker.js?v=15").then(reg=>reg.update()).catch(()=>{});
 }
 
-/* Render saved/local data immediately. Network catalog refresh runs afterward and must never block startup. */
-renderAll();
-refreshResourceCatalog(false).then(()=>{
-  renderCatalogDatalist();
-  renderProfile();
-  renderRecipes();
-  decorateFrames();
-}).catch(()=>{});
+/* Render saved/local data independently of every network request. Re-read storage at boot so
+   a stale cached script or an older namespace cannot leave the default sample state on screen. */
+function bootTracker(){
+  state=loadState();
+  active={today:null,goals:null,goalSubtab:null};
+  renderAll();
+  requestAnimationFrame(()=>{renderAll();decorateFrames()});
+  setTimeout(()=>{state=loadState();renderAll();decorateFrames()},150);
+  refreshResourceCatalog(false).then(()=>{
+    renderCatalogDatalist();renderProfile();renderRecipes();decorateFrames();
+  }).catch(()=>{});
+}
+bootTracker();
 
 /* Attach the reusable four-corner frame ornament to every framed surface. */
 function decorateFrames(root=document){
