@@ -1,0 +1,9 @@
+{
+  "name": "Skyblock Daily Tracker",
+  "short_name": "Skyblock Tasks",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0e0c18",
+  "theme_color": "#18152b",
+  "description": "A customizable daily task and history tracker for Hypixel Skyblock."
+}
