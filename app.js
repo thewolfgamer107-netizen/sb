@@ -11,7 +11,7 @@ const defaultRarities = [
 ];
 const defaults = {
   version:5,
-  settings:{background:"#030915",outline:"#5a6d87",panel:"#071525",group:"#08182a",task:"#0a1d31",inner:"#091a2d",rarities:defaultRarities},
+  settings:{profileUsername:"",background:"#030915",outline:"#5a6d87",panel:"#071525",group:"#08182a",task:"#0a1d31",inner:"#091a2d",rarities:defaultRarities},
   tabs:{today:[{id:"mining",name:"Mining"},{id:"farming",name:"Farming"},{id:"general",name:"General"}],goals:[{id:"gear",name:"Gear"},{id:"skills",name:"Skills"}]},
   groups:[
     {id:"dwarven",page:"today",tabId:"mining",name:"Dwarven Mines",rarity:"rare",completedRarity:"uncommon",order:0},
@@ -148,13 +148,24 @@ function renderHistory(){
   renderHeatmap();
 }
 function renderRarityEditor(){document.querySelector("#rarityEditor").innerHTML=state.settings.rarities.map(r=>`<div class="rarity-row" data-rarity-row="${r.id}"><input data-rarity-name value="${esc(r.name)}"><input data-rarity-color type="color" value="${r.color}"><button class="danger-button" data-delete-rarity="${r.id}">Delete</button></div>`).join("")}
+function moveItem(type,page,id,direction){
+  let list=[];
+  if(type==="tab") list=state.tabs[page];
+  if(type==="group"){const item=state.groups.find(x=>x.id===id);list=groups(page,item?.tabId);}
+  if(type==="task"){const item=state.tasks.find(x=>x.id===id);list=tasks(page,item?.tabId,item?.groupId,true);}
+  const index=list.findIndex(x=>x.id===id),next=index+direction;if(index<0||next<0||next>=list.length)return;
+  const a=list[index],b=list[next],ao=a.order??index,bo=b.order??next;a.order=bo;b.order=ao;
+  if(type==="tab"){const raw=state.tabs[page],ia=raw.findIndex(x=>x.id===a.id),ib=raw.findIndex(x=>x.id===b.id);[raw[ia],raw[ib]]=[raw[ib],raw[ia]];}
+  save();renderAll();
+}
+function arrowButtons(type,page,id){return `<button class="icon-button" data-move-type="${type}" data-move-page="${page}" data-move-id="${id}" data-move-dir="-1" title="Move up">↑</button><button class="icon-button" data-move-type="${type}" data-move-page="${page}" data-move-id="${id}" data-move-dir="1" title="Move down">↓</button>`}
 function renderManage(){
-  document.querySelector("#manageContent").innerHTML=["today","goals"].map(page=>`<section class="manage-page"><h3>${page==="today"?"Today":"Goals"}</h3>${tabs(page).map(tab=>`<div class="manage-tab"><strong>${esc(tab.name)}</strong><button class="danger-button" data-delete-tab-id="${tab.id}" data-delete-tab-page="${page}">Delete tab</button></div>${groups(page,tab.id).map(g=>`<div class="manage-item"><div><strong>${esc(g.name)}</strong><div class="manage-path">${esc(tab.name)} › Group</div></div><div><button class="icon-button" data-edit-group="${g.id}">Edit</button> <button class="danger-button" data-delete-group="${g.id}">Delete</button></div></div>${tasks(page,tab.id,g.id,true).map(t=>`<div class="manage-item"><div><strong style="color:${rarityColor(t.rarity)}">${esc(t.name)}</strong><div class="manage-path">${esc(tab.name)} › ${esc(g.name)} › ${formatWeight(taskScore(t).total)} weight${t.archived?" › archived":""}</div></div><div><button class="icon-button" data-edit-task="${t.id}">Edit</button> <button class="small-button" data-archive-task="${t.id}">${t.archived?"Restore":"Archive"}</button> <button class="danger-button" data-delete-task="${t.id}">Delete</button></div></div>`).join("")}`).join("")}`).join("")}</section>`).join("");
+  document.querySelector("#manageContent").innerHTML=["today","goals"].map(page=>`<details class="manage-page manage-${page}" open><summary><h3>${page==="today"?"Today":"Goals"}</h3></summary>${tabs(page).map(tab=>`<details class="manage-skill"><summary><div class="manage-tab"><input class="manage-name-input" data-rename-tab="${tab.id}" data-rename-page="${page}" value="${esc(tab.name)}" aria-label="Skill tab name"><div>${arrowButtons("tab",page,tab.id)}<button class="small-button" data-save-tab-name="${tab.id}" data-save-tab-page="${page}">Save name</button><button class="danger-button" data-delete-tab-id="${tab.id}" data-delete-tab-page="${page}">Delete tab</button></div></div></summary>${groups(page,tab.id).map(g=>`<details class="manage-group"><summary><div class="manage-item"><div><strong>${esc(g.name)}</strong><div class="manage-path">${esc(tab.name)} › Group</div></div><div>${arrowButtons("group",page,g.id)}<button class="icon-button" data-edit-group="${g.id}">Edit</button><button class="danger-button" data-delete-group="${g.id}">Delete</button></div></div></summary>${tasks(page,tab.id,g.id,true).map(t=>`<div class="manage-item manage-task"><div><strong style="color:${rarityColor(t.rarity)}">${esc(t.name)}</strong><div class="manage-path">${formatWeight(taskScore(t).total)} weight${t.archived?" › archived":""}</div></div><div>${arrowButtons("task",page,t.id)}<button class="icon-button" data-edit-task="${t.id}">Edit</button><button class="small-button" data-archive-task="${t.id}">${t.archived?"Restore":"Archive"}</button><button class="danger-button" data-delete-task="${t.id}">Delete</button></div></div>`).join("")}</details>`).join("")}</details>`).join("")}</details>`).join("");
 }
 function renderAll(){
   setTheme();document.querySelector("#todayLabel").textContent=new Intl.DateTimeFormat(undefined,{weekday:"short",month:"short",day:"numeric"}).format(new Date());
   ["background","outline","panel","group","task","inner"].forEach(k=>document.querySelector(`#${k}Color`).value=state.settings[k]);
-  renderPage("today");renderPage("goals");renderTodayWeekly();renderHistory();renderRarityEditor();renderManage();save();decorateFrames();
+  renderPage("today");renderPage("goals");document.querySelector("#profileUsername").value=state.settings.profileUsername||"";renderTodayWeekly();renderHistory();renderRarityEditor();renderManage();save();decorateFrames();
 }
 function fill(el,items,selected){el.innerHTML=items.map(x=>`<option value="${esc(x.id)}" ${x.id===selected?"selected":""}>${esc(x.name)}</option>`).join("")}
 function parseParts(text,oldParts=[]){const byName=new Map(oldParts.map(p=>[p.name,p]));return text.split("\n").map(x=>x.trim()).filter(Boolean).map(line=>{const bits=line.split("|");const name=bits[0].trim();const weight=validWeight(bits[1]?.trim()||1);const old=byName.get(name);return old?{...old,weight}:{id:uid("part"),name,weight}})}
@@ -198,6 +209,8 @@ addEventListener("click",e=>{
   const part=e.target.closest("[data-add-part]");if(part)addPart(state.tasks.find(t=>t.id===part.dataset.addPart));
   if(e.target.matches("input[data-check-task]")){const task=state.tasks.find(t=>t.id===e.target.dataset.checkTask);updateTaskValue(task,e.target.dataset.checkPart,e.target.checked)}
   const arch=e.target.closest("[data-archive-task]");if(arch){const t=state.tasks.find(x=>x.id===arch.dataset.archiveTask);t.archived=!t.archived;ensureGroupTasks();save();renderAll()}
+  const move=e.target.closest("[data-move-type]");if(move)moveItem(move.dataset.moveType,move.dataset.movePage,move.dataset.moveId,Number(move.dataset.moveDir));
+  const saveTab=e.target.closest("[data-save-tab-name]");if(saveTab){const input=document.querySelector(`[data-rename-tab="${saveTab.dataset.saveTabName}"][data-rename-page="${saveTab.dataset.saveTabPage}"]`),tab=state.tabs[saveTab.dataset.saveTabPage].find(x=>x.id===saveTab.dataset.saveTabName);if(tab&&input?.value.trim()){tab.name=input.value.trim();save();renderAll();toast("Tab renamed")}}
   const delTask=e.target.closest("[data-delete-task]");if(delTask&&confirm("Permanently delete this task and all of its saved history?")){purgeTask(delTask.dataset.deleteTask);ensureGroupTasks();save();renderAll()}
   const delGroup=e.target.closest("[data-delete-group]");if(delGroup&&confirm("Permanently delete this group, its tasks, and their saved history?")){purgeGroup(delGroup.dataset.deleteGroup);save();renderAll()}
   const delTab=e.target.closest("[data-delete-tab-id]");if(delTab&&confirm("Permanently delete this folder tab, its groups, tasks, and their saved history?")){purgeTab(delTab.dataset.deleteTabPage,delTab.dataset.deleteTabId);save();renderAll()}
@@ -211,6 +224,7 @@ document.querySelector("#groupForm").onsubmit=e=>{if(!saveGroup())e.preventDefau
 document.querySelector("#tabForm").onsubmit=()=>{const page=document.querySelector("#tabPage").value,name=document.querySelector("#tabName").value.trim();if(!name)return false;const id=uid(slug(name));state.tabs[page].push({id,name});active[page]=id;save();renderAll()};
 document.querySelector("#deleteTaskDialog").onclick=()=>{const id=document.querySelector("#taskId").value;if(id&&confirm("Permanently delete this task and all saved history?")){purgeTask(id);document.querySelector("#taskDialog").close();ensureGroupTasks();save();renderAll()}};
 document.querySelector("#deleteGroupDialog").onclick=()=>{const id=document.querySelector("#groupId").value;if(id&&confirm("Permanently delete this group and all tasks in it?")){purgeGroup(id);document.querySelector("#groupDialog").close();save();renderAll()}};
+document.querySelector("#saveProfileSettings").onclick=()=>{state.settings.profileUsername=document.querySelector("#profileUsername").value.trim();save();toast("Username saved locally")};
 document.querySelector("#settingsShortcut").onclick=()=>document.querySelector('[data-view="settings"]').click();
 document.querySelector("#historyDate").onchange=renderHistory;document.querySelector("#historyRange").onchange=renderHeatmap;
 document.querySelector("#openHistoryFromWeek").onclick=()=>document.querySelector('[data-view="history"]').click();

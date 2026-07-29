@@ -21,6 +21,7 @@
     <nav class="page-tabs pixel-panel" aria-label="Main pages">
       <button class="page-tab active" data-view="today">Today</button>
       <button class="page-tab" data-view="goals">Goals</button>
+      <button class="page-tab" data-view="profile">Profile</button>
       <button class="page-tab" data-view="history">History</button>
       <button class="page-tab" data-view="settings">Settings</button>
     </nav>
@@ -54,6 +55,17 @@
       </div>
     </section>
 
+    <section class="view" id="profileView">
+      <div class="pixel-panel section-panel profile-shell">
+        <div class="section-head"><div><p class="kicker">API PROFILE VIEW</p><h2>SkyBlock Profile</h2></div><button class="small-button" id="profileRefresh" disabled>Refresh</button></div>
+        <p class="muted">The layout is ready for a future Hypixel/profile-data connection. No API key or username is transmitted in this version.</p>
+        <div class="profile-category-tabs">
+          <button class="profile-category active">Trophy Fish</button><button class="profile-category">Trophy Frogs</button><button class="profile-category">Mutations</button><button class="profile-category">Shards</button>
+        </div>
+        <div class="profile-placeholder"><strong>API integration not enabled yet</strong><p>Add your username below so it is already stored locally when the profile connection is built.</p></div>
+      </div>
+    </section>
+
     <section class="view" id="historyView">
       <div class="pixel-panel section-panel">
         <div class="section-head">
@@ -76,7 +88,7 @@
       <div class="pixel-panel section-panel">
         <div class="section-head"><div><p class="kicker">CUSTOMIZATION</p><h2>Settings</h2></div><button class="small-button" id="addRarity">+ Rarity</button></div>
         <div class="settings-grid">
-          <section class="settings-card"><h3>Menu colors</h3>
+          <details class="settings-card collapsible-settings" open><summary><h3>Menu colors</h3></summary>
             <label>Page background<input type="color" id="backgroundColor" /></label>
             <label>Default outline<input type="color" id="outlineColor" /></label>
             <label>Panel background<input type="color" id="panelColor" /></label>
@@ -84,10 +96,11 @@
             <label>Task background<input type="color" id="taskColor" /></label>
             <label>Inner background<input type="color" id="innerColor" /></label>
             <button class="small-button" id="saveColors">Save colors</button>
-          </section>
-          <section class="settings-card rarity-settings"><h3>Rarities</h3><p class="muted">Rows are ordered from lowest to highest. Completion percentages map linearly across them.</p><div id="rarityEditor"></div></section>
+          </details>
+          <details class="settings-card rarity-settings collapsible-settings"><summary><h3>Rarities</h3></summary><p class="muted">Rows are ordered from lowest to highest. Completion percentages map linearly across them.</p><div id="rarityEditor"></div></details>
         </div>
-        <section class="settings-card manage-section"><div class="section-head"><div><h3>Manage layout</h3><p class="muted">Archive keeps history. Permanent delete removes setup/test items and their saved values.</p></div></div><div id="manageContent"></div></section>
+        <details class="settings-card manage-section collapsible-settings" open><summary><h3>Manage layout</h3></summary><p class="muted">Rename and reorder tabs, groups, and tasks. Archive keeps history. Permanent delete removes setup/test items and saved values.</p><div id="manageContent"></div></details>
+        <details class="settings-card collapsible-settings"><summary><h3>Profile setup</h3></summary><label>SkyBlock username<input id="profileUsername" maxlength="32" placeholder="Minecraft username" /></label><p class="muted">Stored only in this browser. API fetching will be added separately after its data sources are confirmed.</p><button class="small-button" id="saveProfileSettings">Save username</button></details>
       </div>
     </section>
   </main>
