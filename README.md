@@ -1,31 +1,25 @@
 # Skyblock Daily Tracker
 
-A free, static Hypixel Skyblock daily checklist for GitHub Pages.
+A free static website for tracking Hypixel Skyblock daily tasks. The layout uses nested folders:
 
-## Publish on GitHub Pages
+**Skill folder → Group box → Inner tab → Task**
 
-1. On GitHub, click **New repository**.
-2. Name it `skyblock-daily-tracker`.
-3. Set it to **Public** if you use GitHub Free, then create it.
-4. Click **uploading an existing file**.
-5. Upload every file from this folder: `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `service-worker.js`, and `README.md`.
-6. Commit the files to the `main` branch.
-7. Open the repository's **Settings** tab.
-8. In the left sidebar, open **Pages**.
-9. Under **Build and deployment**, set Source to **Deploy from a branch**.
-10. Choose branch **main**, folder **/(root)**, and click **Save**.
-11. After GitHub finishes publishing, the site will normally be at:
-   `https://YOUR-USERNAME.github.io/skyblock-daily-tracker/`
+## Publish an update to GitHub Pages
 
-## Important data behavior
+1. Unzip this download.
+2. Open your existing GitHub repository.
+3. Choose **Add file → Upload files**.
+4. Upload all files from this folder and allow them to replace the older versions.
+5. Commit the changes to `main`.
+6. GitHub Pages will update automatically.
 
-- Checkboxes and history are stored in the browser using localStorage.
-- A new calendar day automatically gets a fresh checklist; previous dates remain in History.
-- Data does not automatically sync between devices or browsers.
-- Use **History > Export backup** regularly.
-- Importing a backup replaces the data currently stored in that browser.
-- The repository contains the website code, not your personal checkbox history.
+Your checkbox history is stored in your browser, not in these code files. This version migrates tasks from the older layout by placing them in a `General` group and `Daily` inner tab when those values did not previously exist.
 
-## Updating later
+## Adding items quickly
 
-Keep stable task IDs when changing code so old history remains connected. The built-in task manager preserves IDs when renaming or editing a task. Archived tasks remain available to old history.
+- Click the `+` folder tab to add a skill.
+- Click **Add group box** at the bottom of a skill.
+- Click the small `+` beside a group's inner tabs to add another tab.
+- Click **+ Task** inside a group to add a task directly to the selected inner tab.
+
+Use **History → Export backup** periodically to protect your local data.
