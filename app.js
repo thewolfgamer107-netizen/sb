@@ -379,22 +379,36 @@ document.querySelector("#addRecipeProject").onclick=()=>openRecipe();document.qu
 document.querySelector("#holdingSearch").oninput=renderHoldings;document.querySelector("#saveHoldingOverride").onclick=()=>{const item=resolveCatalogItem(document.querySelector("#holdingItem").value),id=item?.id||document.querySelector("#holdingItem").value.trim().toUpperCase().replace(/[^A-Z0-9]+/g,"_");if(!id)return;state.holdingOverrides[id]=Math.max(0,Number(document.querySelector("#holdingAmount").value)||0);save();renderRecipes();toast("Holding override saved")};document.querySelector("#refreshRecipeData").onclick=()=>refreshProfile(false);
 
 if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
-refreshResourceCatalog(false).then(()=>{renderAll()});
+
+/* Render saved/local data immediately. Network catalog refresh runs afterward and must never block startup. */
+renderAll();
+refreshResourceCatalog(false).then(()=>{
+  renderCatalogDatalist();
+  renderProfile();
+  renderRecipes();
+  decorateFrames();
+}).catch(()=>{});
 
 /* Attach the reusable four-corner frame ornament to every framed surface. */
 function decorateFrames(root=document){
   const selector='.pixel-panel,.group-card,.task-card,.settings-card,.summary-box,.history-skill,.folder-tab,.page-tab';
   const elements=[];if(root.nodeType===1&&root.matches(selector))elements.push(root);elements.push(...root.querySelectorAll(selector));
   elements.forEach(el=>{
-    if(el.dataset.cornerFrame==='1')return;
-    el.dataset.cornerFrame='1';
-    for(const pos of ['tl','tr','br','bl']){
+    /* innerHTML-based rerenders can remove ornaments while leaving the marker.
+       Reconcile the actual children instead of trusting dataset state. */
+    const positions=['tl','tr','br','bl'];
+    const existing=[...el.children].filter(child=>child.classList?.contains('frame-corner'));
+    const valid=positions.every(pos=>existing.some(child=>child.classList.contains(pos))) && existing.length===4;
+    if(valid){el.dataset.cornerFrame='1';return;}
+    existing.forEach(child=>child.remove());
+    for(const pos of positions){
       const corner=document.createElement('i');
       corner.className=`frame-corner ${pos}`;
       corner.setAttribute('aria-hidden','true');
       corner.innerHTML='<b class="corner-dot"></b><b class="corner-arm-x"></b><b class="corner-arm-y"></b>';
       el.appendChild(corner);
     }
+    el.dataset.cornerFrame='1';
   });
 }
 const frameObserver=new MutationObserver(records=>{
