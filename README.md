@@ -1,28 +1,31 @@
 # SkyBlock Task Menu
 
-A free static website for GitHub Pages. Data stays in the browser and can be exported as a JSON backup.
-
-## Update an existing GitHub Pages site
-
-1. Open the live site and use **History → Export backup**.
-2. Unzip this package.
-3. In the existing GitHub repository, choose **Add file → Upload files**.
-4. Upload `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `service-worker.js`, and this README.
-5. Commit the changes. GitHub Pages will redeploy automatically.
-6. Reload the live site. Existing version-1/version-2 browser data is migrated automatically.
+A static, offline-capable task and goals tracker designed for GitHub Pages.
 
 ## Features
 
-- Separate Today and Goals folder tabs
-- Square Hypixel-style panels and corner accents
-- Editable rarity names and hex colors
-- Rarity outlines on groups and tasks
-- Every task can gain checklist parts using its `+` button
-- Parent completion requires every checklist part
-- Daily history and reset behavior
-- Long-term Goals with compact completion dates
-- Active and completed copies of partially completed goal groups
-- Completed goal groups use their own rarity
-- Goal folder tabs automatically adopt the highest completed-task rarity
-- Overall and per-folder progress bars
-- Import/export backups
+- Hypixel-style square panels and rarity-colored folder tabs
+- Separate Today and Goals layouts
+- Weighted task progress, including weights for checklist parts
+- Daily skill heat map with 1-week, 1-month, and 1-year ranges
+- Automatic rarity colors based on weighted completion percentage
+- Goal completion dates and completed-group copies
+- Editable colors for the page, panels, groups, tasks, inner areas, outlines, and rarities
+- Archive and permanent-delete controls
+- Browser-local history with JSON backup and restore
+
+## Publish on GitHub Pages
+
+1. Unzip this package.
+2. Upload the files inside `skyblock-daily-tracker` to the root of your GitHub repository.
+3. Open **Settings → Pages** in the repository.
+4. Choose **Deploy from a branch**, then select `main` and `/(root)`.
+5. Save and wait for GitHub to publish the site.
+
+## Updating an existing installation
+
+Export a backup from **History** first. Then replace the repository files with this package and commit them. Existing browser data is migrated automatically; old tasks and checklist parts receive a default weight of 1.
+
+## Data safety
+
+Data is stored locally for each browser and website address. Export backups regularly, especially before clearing browser data, changing the GitHub Pages URL, or testing permanent deletion.

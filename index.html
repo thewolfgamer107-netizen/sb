@@ -25,10 +25,7 @@
     <section class="view active" id="todayView">
       <div class="tracker-frame pixel-panel">
         <div class="folder-tabs" id="todayTabs"></div>
-        <div class="tracker-toolbar">
-          <div id="todayOverall" class="compact-progress"></div>
-          <button class="small-button" data-add-group="today">+ Group</button>
-        </div>
+        <div class="tracker-toolbar"><div id="todayOverall" class="compact-progress"></div><button class="small-button" data-add-group="today">+ Group</button></div>
         <div class="skill-progress" id="todaySkillProgress"></div>
         <div class="scroll-space" id="todayContent"></div>
       </div>
@@ -38,10 +35,7 @@
     <section class="view" id="goalsView">
       <div class="tracker-frame pixel-panel">
         <div class="folder-tabs" id="goalsTabs"></div>
-        <div class="tracker-toolbar">
-          <div id="goalsOverall" class="compact-progress"></div>
-          <button class="small-button" data-add-group="goals">+ Group</button>
-        </div>
+        <div class="tracker-toolbar"><div id="goalsOverall" class="compact-progress"></div><button class="small-button" data-add-group="goals">+ Group</button></div>
         <div class="skill-progress" id="goalsSkillProgress"></div>
         <div class="scroll-space" id="goalsContent"></div>
       </div>
@@ -49,7 +43,16 @@
 
     <section class="view" id="historyView">
       <div class="pixel-panel section-panel">
-        <div class="section-head"><div><p class="kicker">DAILY ARCHIVE</p><h2>History</h2></div><button class="small-button" id="exportBackup">Export backup</button></div>
+        <div class="section-head">
+          <div><p class="kicker">WEIGHTED COMPLETION MAP</p><h2>History Showcase</h2></div>
+          <label class="inline-control">Range<select id="historyRange"><option value="7">1 week</option><option value="35">1 month</option><option value="364">1 year</option></select></label>
+        </div>
+        <div id="historyHeatmap" class="heatmap-wrap"></div>
+        <div id="historyLegend" class="rarity-legend"></div>
+      </div>
+
+      <div class="pixel-panel section-panel history-archive-panel">
+        <div class="section-head"><div><p class="kicker">DAILY ARCHIVE</p><h2>Day details</h2></div><button class="small-button" id="exportBackup">Export backup</button></div>
         <div class="history-controls"><label>Date<input type="date" id="historyDate" /></label><button class="small-button" id="importBackup">Import backup</button><input hidden type="file" accept="application/json" id="importFile" /></div>
         <div id="historySummary" class="summary-box"></div>
         <div id="historyContent" class="history-content"></div>
@@ -60,10 +63,18 @@
       <div class="pixel-panel section-panel">
         <div class="section-head"><div><p class="kicker">CUSTOMIZATION</p><h2>Settings</h2></div><button class="small-button" id="addRarity">+ Rarity</button></div>
         <div class="settings-grid">
-          <section class="settings-card"><h3>Menu colors</h3><label>Default outline<input type="color" id="outlineColor" /></label><label>Panel background<input type="color" id="panelColor" /></label><label>Inner background<input type="color" id="innerColor" /></label><button class="small-button" id="saveColors">Save colors</button></section>
-          <section class="settings-card rarity-settings"><h3>Rarities</h3><p class="muted">Names and colors are fully editable. Higher rows count as higher rarity.</p><div id="rarityEditor"></div></section>
+          <section class="settings-card"><h3>Menu colors</h3>
+            <label>Page background<input type="color" id="backgroundColor" /></label>
+            <label>Default outline<input type="color" id="outlineColor" /></label>
+            <label>Panel background<input type="color" id="panelColor" /></label>
+            <label>Group background<input type="color" id="groupColor" /></label>
+            <label>Task background<input type="color" id="taskColor" /></label>
+            <label>Inner background<input type="color" id="innerColor" /></label>
+            <button class="small-button" id="saveColors">Save colors</button>
+          </section>
+          <section class="settings-card rarity-settings"><h3>Rarities</h3><p class="muted">Rows are ordered from lowest to highest. Completion percentages map linearly across them.</p><div id="rarityEditor"></div></section>
         </div>
-        <section class="settings-card manage-section"><div class="section-head"><div><h3>Manage layout</h3><p class="muted">Edit or archive tabs, groups, and tasks without deleting old history.</p></div></div><div id="manageContent"></div></section>
+        <section class="settings-card manage-section"><div class="section-head"><div><h3>Manage layout</h3><p class="muted">Archive keeps history. Permanent delete removes setup/test items and their saved values.</p></div></div><div id="manageContent"></div></section>
       </div>
     </section>
   </main>
@@ -73,9 +84,9 @@
     <input type="hidden" id="taskId" /><input type="hidden" id="taskPage" />
     <label>Task name<input id="taskName" maxlength="80" required /></label>
     <div class="form-grid"><label>Folder tab<select id="taskTab"></select></label><label>Group<select id="taskGroup"></select></label></div>
-    <label>Task rarity<select id="taskRarity"></select></label>
-    <label>Checklist parts <span class="muted">(optional; one per line)</span><textarea id="taskParts" rows="7" placeholder="Collect materials&#10;Forge components&#10;Apply upgrades"></textarea></label>
-    <div class="dialog-actions"><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
+    <div class="form-grid"><label>Task rarity<select id="taskRarity"></select></label><label>Completion weight<input id="taskWeight" type="number" min="0" step="0.25" value="1" /></label></div>
+    <label>Checklist parts <span class="muted">(optional; one per line as Name | Weight)</span><textarea id="taskParts" rows="7" placeholder="Collect materials | 2&#10;Forge components | 4&#10;Apply upgrades | 1"></textarea></label>
+    <div class="dialog-actions"><button type="button" class="danger-button hidden" id="deleteTaskDialog">Permanent delete</button><span class="dialog-spacer"></span><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
   </form></dialog>
 
   <dialog id="groupDialog"><form id="groupForm" method="dialog">
@@ -84,7 +95,7 @@
     <label>Group name<input id="groupName" maxlength="60" required /></label>
     <div class="form-grid"><label>Folder tab<select id="groupTab"></select></label><label>Active rarity<select id="groupRarity"></select></label></div>
     <label id="completedRarityLabel">Completed-copy rarity<select id="groupCompletedRarity"></select></label>
-    <div class="dialog-actions"><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
+    <div class="dialog-actions"><button type="button" class="danger-button hidden" id="deleteGroupDialog">Permanent delete</button><span class="dialog-spacer"></span><button type="button" class="small-button" data-close>Cancel</button><button class="primary-button">Save</button></div>
   </form></dialog>
 
   <dialog id="tabDialog"><form id="tabForm" method="dialog">
