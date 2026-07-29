@@ -22,15 +22,16 @@ body{font-family:"Pixelify Sans","Courier New",ui-monospace,monospace;font-size:
 .folder-tab.active{background:var(--panel);padding:13px 18px;filter:brightness(1.16)}
 .folder-tab.add{width:52px;min-width:52px;max-width:52px;flex-basis:52px;padding-inline:15px}
 
-/* Canonical top-left ornament. Other corners are exact rotations. */
-.frame-corner{position:absolute;z-index:8;width:var(--corner-size);height:var(--corner-size);color:var(--frame-color);pointer-events:none;transform-origin:center}
-.frame-corner.tl{top:-8px;left:-8px}.frame-corner.tr{top:-8px;right:-8px;transform:rotate(90deg)}.frame-corner.br{right:-8px;bottom:-8px;transform:rotate(180deg)}.frame-corner.bl{left:-8px;bottom:-8px;transform:rotate(270deg)}
-.frame-corner .corner-dot{position:absolute;left:1px;top:1px;width:5px;height:5px;background:currentColor}
-/* Inverted L: its empty pocket faces the actual corner. */
-.frame-corner .corner-core{display:none}
-/* Detached arms: each begins after a 3px gap, protrudes across the frame, then turns away from the corner. */
-.frame-corner .corner-arm-x{position:absolute;left:21px;top:8px;width:8px;height:7px;border-top:2px solid currentColor;border-right:2px solid currentColor}
-.frame-corner .corner-arm-y{position:absolute;left:8px;top:21px;width:7px;height:8px;border-left:2px solid currentColor;border-bottom:2px solid currentColor}
+/* Canonical top-left ornament. The other three corners are exact rotations. */
+.frame-corner{position:absolute;z-index:8;width:22px;height:22px;color:var(--frame-color);pointer-events:none;transform-origin:center}
+.frame-corner.tl{top:-6px;left:-6px}.frame-corner.tr{top:-6px;right:-6px;transform:rotate(90deg)}.frame-corner.br{right:-6px;bottom:-6px;transform:rotate(180deg)}.frame-corner.bl{left:-6px;bottom:-6px;transform:rotate(270deg)}
+/* Square rivet in the open corner pocket. */
+.frame-corner .corner-dot{position:absolute;left:1px;top:1px;width:4px;height:4px;background:currentColor}
+/* Main corner points inward toward the panel. */
+.frame-corner:before{content:"";position:absolute;left:7px;top:7px;width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor}
+/* Two smaller detached hooks sit closer to the corner and turn away from it. */
+.frame-corner .corner-arm-x{position:absolute;left:14px;top:5px;width:6px;height:6px;border-top:2px solid currentColor;border-right:2px solid currentColor}
+.frame-corner .corner-arm-y{position:absolute;left:5px;top:14px;width:6px;height:6px;border-left:2px solid currentColor;border-bottom:2px solid currentColor}
 
 .today-dashboard{display:grid;grid-template-columns:minmax(620px,1.02fr) minmax(600px,.98fr);gap:14px;align-items:start}
 .today-primary{min-width:0}.tracker-frame{padding:0 14px 14px;min-width:0}.weekly-panel{padding:18px;min-width:0;position:sticky;top:12px}
